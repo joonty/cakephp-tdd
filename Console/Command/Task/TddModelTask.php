@@ -6,24 +6,28 @@ App::uses('ModelTask','Console/Command/Task');
  *
  * @package       Cake.Console.Command.Task
  */
-class TModelTask extends ModelTask {
+class TddModelTask extends ModelTask {
 /**
  * tasks
  *
  * @var array
  */
-	public $tasks = array('DbConfig', 'Fixture', 'Test', 'Template');
+	public $tasks = array('DbConfig', 'Fixture', 'TddModelTest', 'Template');
 
         public function bakeTest($className) {
 		echo "bakeTest()\n";
         }
 
+        public function bakeFixture($className) {
+		echo "bakeFixture()\n";
+        }
+
 	public function bake($name,$data = array()) {
 		parent::bake($name,$data);
-		$this->bakeUnitTest($data);
+		$this->bakeTestAndFixture($name,$data);
 	}
 
-	private function bakeUnitTest(array $data) {
+	private function bakeTestAndFixture($name,array $data) {
 		var_dump($data);
 	}
 

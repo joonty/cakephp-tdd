@@ -33,14 +33,14 @@ App::uses('Model', 'Model');
  * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html
  */
-class BakerShell extends AppShell {
+class BakeShell extends AppShell {
 
 /**
  * Contains tasks to load and instantiate
  *
  * @var array
  */
-	public $tasks = array('Project', 'DbConfig', 'Tdd.TModel', 'Tdd.Controller', 'View', 'Plugin', 'Fixture', 'Test');
+	public $tasks = array('Project', 'DbConfig', 'Tdd.TddModel', 'Tdd.Controller', 'View', 'Plugin', 'Fixture', 'Test');
 
 /**
  * The connection being used.
@@ -102,7 +102,7 @@ class BakerShell extends AppShell {
 				$this->DbConfig->execute();
 				break;
 			case 'M':
-				$this->TModel->execute();
+				$this->TddModel->execute();
 				break;
 			case 'V':
 				$this->View->execute();
@@ -143,11 +143,11 @@ class BakerShell extends AppShell {
 		}
 
 		if (empty($this->args)) {
-			$this->TModel->interactive = true;
-			$name = $this->TModel->getName($this->connection);
+			$this->TddModel->interactive = true;
+			$name = $this->TddModel->getName($this->connection);
 		}
 
-		foreach (array('TModel', 'Controller', 'View') as $task) {
+		foreach (array('TddModel', 'Controller', 'View') as $task) {
 			$this->{$task}->connection = $this->connection;
 			$this->{$task}->interactive = false;
 		}
@@ -172,8 +172,8 @@ class BakerShell extends AppShell {
 
 		if ($modelBaked && $modelExists === false) {
 			if ($this->_checkUnitTest()) {
-				$this->TModel->bakeFixture($model);
-				$this->TModel->bakeTest($model);
+				$this->TddModel->bakeFixture($model);
+				$this->TddModel->bakeTest($model);
 			}
 			$modelExists = true;
 		}
@@ -223,7 +223,7 @@ class BakerShell extends AppShell {
 			'parser' => $this->DbConfig->getOptionParser()
 		))->addSubcommand('model', array(
 			'help' => __d('cake_console', 'Bake a model.'),
-			'parser' => $this->TModel->getOptionParser()
+			'parser' => $this->TddModel->getOptionParser()
 		))->addSubcommand('view', array(
 			'help' => __d('cake_console', 'Bake views for controllers.'),
 			'parser' => $this->View->getOptionParser()
