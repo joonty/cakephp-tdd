@@ -33,14 +33,14 @@ App::uses('Model', 'Model');
  * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html
  */
-class BakeShell extends AppShell {
+class BakerShell extends AppShell {
 
 /**
  * Contains tasks to load and instantiate
  *
  * @var array
  */
-	public $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test');
+	public $tasks = array('Project', 'DbConfig', 'Tdd.TModel', 'Tdd.Controller', 'View', 'Plugin', 'Fixture', 'Test');
 
 /**
  * The connection being used.
@@ -58,7 +58,6 @@ class BakeShell extends AppShell {
 		parent::startup();
 		Configure::write('debug', 2);
 		Configure::write('Cache.disable', 1);
-
 		$task = Inflector::classify($this->command);
 		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
 			if (isset($this->params['connection'])) {
@@ -87,24 +86,23 @@ class BakeShell extends AppShell {
 			$this->args = null;
 			return $this->DbConfig->execute();
 		}
-		$this->out(__d('cake_console', 'Interactive Bake Shell'));
+		$this->out(__d('cake_console', 'TDD Bake Shell'));
 		$this->hr();
 		$this->out(__d('cake_console', '[D]atabase Configuration'));
 		$this->out(__d('cake_console', '[M]odel'));
 		$this->out(__d('cake_console', '[V]iew'));
 		$this->out(__d('cake_console', '[C]ontroller'));
 		$this->out(__d('cake_console', '[P]roject'));
-		$this->out(__d('cake_console', '[F]ixture'));
-		$this->out(__d('cake_console', '[T]est case'));
 		$this->out(__d('cake_console', '[Q]uit'));
+		$this->out(__d('cake_console', PHP_EOL.'(Note: tests and fixtures are generated simultaneously)'));
 
-		$classToBake = strtoupper($this->in(__d('cake_console', 'What would you like to Bake?'), array('D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q')));
+		$classToBake = strtoupper($this->in(__d('cake_console', 'What would you like to Bake?'), array('D', 'M', 'V', 'C', 'P', 'Q')));
 		switch ($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();
 				break;
 			case 'M':
-				$this->Model->execute();
+				$this->TModel->execute();
 				break;
 			case 'V':
 				$this->View->execute();
@@ -145,11 +143,11 @@ class BakeShell extends AppShell {
 		}
 
 		if (empty($this->args)) {
-			$this->Model->interactive = true;
-			$name = $this->Model->getName($this->connection);
+			$this->TModel->interactive = true;
+			$name = $this->TModel->getName($this->connection);
 		}
 
-		foreach (array('Model', 'Controller', 'View') as $task) {
+		foreach (array('TModel', 'Controller', 'View') as $task) {
 			$this->{$task}->connection = $this->connection;
 			$this->{$task}->interactive = false;
 		}
@@ -174,8 +172,8 @@ class BakeShell extends AppShell {
 
 		if ($modelBaked && $modelExists === false) {
 			if ($this->_checkUnitTest()) {
-				$this->Model->bakeFixture($model);
-				$this->Model->bakeTest($model);
+				$this->TModel->bakeFixture($model);
+				$this->TModel->bakeTest($model);
 			}
 			$modelExists = true;
 		}
@@ -209,7 +207,7 @@ class BakeShell extends AppShell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(__d('cake_console',
-			'The Bake script generates controllers, views and models for your application.'
+			'The TDD Bake script generates controllers, views and models for your application, along with tests.'
 			. ' If run with no command line arguments, Bake guides the user through the class creation process.'
 			. ' You can customize the generation process by telling Bake where different parts of your application are using command line arguments.'
 		))->addSubcommand('all', array(
@@ -225,7 +223,7 @@ class BakeShell extends AppShell {
 			'parser' => $this->DbConfig->getOptionParser()
 		))->addSubcommand('model', array(
 			'help' => __d('cake_console', 'Bake a model.'),
-			'parser' => $this->Model->getOptionParser()
+			'parser' => $this->TModel->getOptionParser()
 		))->addSubcommand('view', array(
 			'help' => __d('cake_console', 'Bake views for controllers.'),
 			'parser' => $this->View->getOptionParser()

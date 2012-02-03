@@ -137,6 +137,8 @@ class TemplateTask extends AppShell {
  * @return string contents of generated code template
  */
 	public function generate($directory, $filename, $vars = null) {
+		var_dump($this->templateVars);
+		exit;
 		if ($vars !== null) {
 			$this->set($vars);
 		}
