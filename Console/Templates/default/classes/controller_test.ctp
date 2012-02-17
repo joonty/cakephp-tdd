@@ -60,12 +60,16 @@ class <?php echo $fullClassName; ?>TestCase extends TddControllerTestCase {
 
 <?php foreach ($methods as $method): ?>
 	/**
-	 * test<?php echo Inflector::classify($method); ?> method
+	 * test<?php echo Inflector::classify($method['name']); ?> method
 	 *
 	 * @return void
 	 */
-	public function test<?php echo Inflector::classify($method); ?>() {
-
+	public function test<?php echo Inflector::classify($method['name']); ?>() {
+		$retval = $this->testAction(
+			'<?php echo $method['action']?>',
+			array('return'=>'result')
+		);
+		
 	}
 
 <?php endforeach;?>

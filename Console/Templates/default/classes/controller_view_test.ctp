@@ -60,12 +60,17 @@ class <?php echo $fullClassName; ?>ViewTestCase extends TddControllerTestCase {
 
 <?php foreach ($methods as $method): ?>
 	/**
-	 * test<?php echo Inflector::classify($method); ?> method
+	 * test<?php echo Inflector::classify($method['name']); ?> method
 	 *
 	 * @return void
 	 */
-	public function test<?php echo Inflector::classify($method); ?>() {
-
+	public function test<?php echo Inflector::classify($method['name']); ?>() {
+		$html = $this->testAction(
+			'<?php echo $method['action']?>',
+			array('return'=>'view')
+		);
+		$doc = new DOMDocument();
+		$doc->loadHTMLString($html);
 	}
 
 <?php endforeach;?>

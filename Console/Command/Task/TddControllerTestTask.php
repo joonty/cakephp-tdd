@@ -1,8 +1,10 @@
 <?php
-App::uses('TestTask','Console/Command/Task');
+
+App::uses('TestTask', 'Console/Command/Task');
+
 class TddControllerTestTask extends TestTask {
 
-	public function bake($type, $className,$actions,$helpers,$components) {
+	public function bake($type, $className, $actions, $helpers, $components) {
 		$plugin = null;
 		if ($this->plugin) {
 			$plugin = $this->plugin . '.';
@@ -13,7 +15,7 @@ class TddControllerTestTask extends TestTask {
 		}
 
 		$realType = $this->mapType($type, $plugin);
-		$fullClassName = $className.'Controller';
+		$fullClassName = $className . 'Controller';
 
 		if ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($realType, $fullClassName)) {
 			$this->out(__d('cake_console', 'Bake is detecting possible fixtures...'));
@@ -22,22 +24,21 @@ class TddControllerTestTask extends TestTask {
 		} elseif ($this->interactive) {
 			$this->getUserFixtures();
 		}
-		App::uses($fullClassName,$realType);
+		App::uses($fullClassName, $realType);
 
 		$methods = array();
-		if (class_exists($fullClassName,true)) {
-			$methods = $this->getTestableMethods($fullClassName);
+		if (class_exists($fullClassName, true)) {
+			$methods = $this->getTestableMethods($fullClassName,strtolower($className));
 		}
 		$mock = $this->hasMockClass($type, $fullClassName);
-		$construction = $this->generateConstructor($type, $fullClassName,$className,$components);
+		$construction = $this->generateConstructor($type, $fullClassName, $className, $components);
 
 		$this->out("\n" . __d('cake_console', 'Baking test case for %s %s ...', $className, $type), 1, Shell::QUIET);
 
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
 		$this->Template->set(compact(
-			'className', 'methods', 'type', 'fullClassName', 'mock',
-			'construction', 'realType'
+		'className', 'methods', 'type', 'fullClassName', 'mock', 'construction', 'realType'
 		));
 		$out = $this->Template->generate('classes', 'controller_test');
 		$outView = $this->Template->generate('classes', 'controller_view_test');
@@ -46,38 +47,40 @@ class TddControllerTestTask extends TestTask {
 		$filename = $this->testCaseFileName($type, $className);
 		$made = $this->createFile($filename, $out);
 		if ($made) {
-			$this->createFile($this->testCaseFileName($type,$className,'Vars'),$outVars);
-			$this->createFile($this->testCaseFileName($type,$className,'View'),$outView);
+			$this->createFile($this->testCaseFileName($type, $className, 'Vars'), $outVars);
+			$this->createFile($this->testCaseFileName($type, $className, 'View'), $outView);
 			return $out;
 		}
 		return false;
 	}
 
-	public function generateConstructor($type,$fullClassName,$className,$components) {
-		return '$this->generate("'.$className.'");'.PHP_EOL;
+	public function generateConstructor($type, $fullClassName, $className, $components) {
+		return '$this->generate("' . $className . '");' . PHP_EOL;
 	}
 
-	public function getTestableMethods($className) {
+	public function getTestableMethods($className, $urlName) {
 		$classMethods = get_class_methods($className);
 		$parentMethods = get_class_methods(get_parent_class($className));
 		$thisMethods = array_diff($classMethods, $parentMethods);
 		$out = array();
 		foreach ($thisMethods as $method) {
 			if (substr($method, 0, 1) != '_' && $method != strtolower($className)) {
-				$out[] = $method;
+				$out[] = array('name' => $method, 'action' => '/'.$urlName.'/'.str_replace('_','/',$method));
 			}
 		}
 		return $out;
 	}
 
-	public function testCaseFileName($type, $className,$append = '') {
+	public function testCaseFileName($type, $className, $append = '') {
 		$path = $this->getPath() . 'Case' . DS;
 		$type = Inflector::camelize($type);
 		if (isset($this->classTypes[$type])) {
 			$path .= $this->classTypes[$type] . DS;
 		}
 		$className = $this->getRealClassName($type, $className);
-		return str_replace('/', DS, $path) . Inflector::camelize($className) .$append. 'Test.php';
+		return str_replace('/', DS, $path) . Inflector::camelize($className) . $append . 'Test.php';
 	}
+
 }
+
 ?>
