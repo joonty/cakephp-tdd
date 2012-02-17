@@ -74,7 +74,7 @@ class TemplateTask extends AppShell {
 		foreach ($plugins as $plugin) {
 			$paths[] = $this->_pluginPath($plugin) . 'Console' . DS;
 		}
-		
+
 		$paths = array_merge($paths, App::path('Console'));
 
 		// TEMPORARY TODO remove when all paths are DS terminated
@@ -137,9 +137,7 @@ class TemplateTask extends AppShell {
  * @return string contents of generated code template
  */
 	public function generate($directory, $filename, $vars = null) {
-		var_dump($this->templateVars);
-		exit;
-		if ($vars !== null) {
+		if ($vars !== null) 
 			$this->set($vars);
 		}
 		if (empty($this->templatePaths)) {

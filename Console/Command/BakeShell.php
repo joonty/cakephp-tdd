@@ -40,7 +40,7 @@ class BakeShell extends AppShell {
  *
  * @var array
  */
-	public $tasks = array('Project', 'DbConfig', 'Tdd.TddModel', 'Tdd.Controller', 'View', 'Plugin', 'Fixture', 'Test');
+	public $tasks = array('Project', 'DbConfig', 'Tdd.TddModel', 'Tdd.TddController', 'View', 'Plugin', 'Fixture', 'Test');
 
 /**
  * The connection being used.
@@ -108,7 +108,7 @@ class BakeShell extends AppShell {
 				$this->View->execute();
 				break;
 			case 'C':
-				$this->Controller->execute();
+				$this->TddController->execute();
 				break;
 			case 'P':
 				$this->Project->execute();
@@ -147,7 +147,7 @@ class BakeShell extends AppShell {
 			$name = $this->TddModel->getName($this->connection);
 		}
 
-		foreach (array('TddModel', 'Controller', 'View') as $task) {
+		foreach (array('TddModel', 'TddController', 'View') as $task) {
 			$this->{$task}->connection = $this->connection;
 			$this->{$task}->interactive = false;
 		}
@@ -180,11 +180,7 @@ class BakeShell extends AppShell {
 
 		if ($modelExists === true) {
 			$controller = $this->_controllerName($name);
-			if ($this->Controller->bake($controller, $this->Controller->bakeActions($controller))) {
-				if ($this->_checkUnitTest()) {
-					$this->Controller->bakeTest($controller);
-				}
-			}
+			$this->TddController->bake($controller, $this->TddController->bakeActions($controller));
 			App::uses($controller . 'Controller', 'Controller');
 			if (class_exists($controller . 'Controller')) {
 				$this->View->args = array($name);
@@ -229,7 +225,7 @@ class BakeShell extends AppShell {
 			'parser' => $this->View->getOptionParser()
 		))->addSubcommand('controller', array(
 			'help' => __d('cake_console', 'Bake a controller.'),
-			'parser' => $this->Controller->getOptionParser()
+			'parser' => $this->TddController->getOptionParser()
 		))->addSubcommand('fixture', array(
 			'help' => __d('cake_console', 'Bake a fixture.'),
 			'parser' => $this->Fixture->getOptionParser()

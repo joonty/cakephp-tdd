@@ -12,23 +12,26 @@ class TddModelTask extends ModelTask {
  *
  * @var array
  */
-	public $tasks = array('DbConfig', 'Fixture', 'TddModelTest', 'Template');
+	public $tasks = array('DbConfig', 'Fixture', 'Tdd.TddTest','Tdd.TddTestTask', 'Template');
 
-        public function bakeTest($className) {
-		echo "bakeTest()\n";
-        }
+	public function bakeTest($className) {
+		$this->TddTest->interactive = $this->interactive;
+		$this->TddTest->plugin = $this->plugin;
+		$this->TddTest->connection = $this->connection;
+		return $this->TddTest->bake('Model', $className);
+	}
 
-        public function bakeFixture($className) {
-		echo "bakeFixture()\n";
-        }
+	public function bakeFixture($className, $useTable = null,$data) {
+		$this->Fixture->interactive = $this->interactive;
+		$this->Fixture->connection = $this->connection;
+		$this->Fixture->plugin = $this->plugin;
+		$this->Fixture->bake($className, $useTable,array('schema'=>$className));
+	}
 
 	public function bake($name,$data = array()) {
 		parent::bake($name,$data);
-		$this->bakeTestAndFixture($name,$data);
-	}
-
-	private function bakeTestAndFixture($name,array $data) {
-		var_dump($data);
+		$this->bakeTest($name);
+		$this->bakeFixture($name,null,$data);
 	}
 
 	protected function _checkUnitTest() {
