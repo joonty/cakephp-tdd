@@ -143,6 +143,7 @@ class TestShell extends TestsuiteShell {
 
 		//Cake doesn't want to include my test case, so we'll do it old-school
 		include realpath(__DIR__.'/../../TestSuite/TddTestCase.php');
+		include realpath(__DIR__.'/../../TestSuite/TddControllerTestCase.php');
 		include realpath(__DIR__.'/../../TestSuite/TddTestSuiteCommand.php');
 		include realpath(__DIR__.'/../../TestSuite/TddTestLoader.php');
 		include realpath(__DIR__.'/../../TestSuite/TddTestRunner.php');

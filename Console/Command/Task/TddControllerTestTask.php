@@ -16,6 +16,7 @@ class TddControllerTestTask extends TestTask {
 
 		$realType = $this->mapType($type, $plugin);
 		$fullClassName = $className . 'Controller';
+		$primaryModel = Inflector::singularize($className);
 
 		if ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($realType, $fullClassName)) {
 			$this->out(__d('cake_console', 'Bake is detecting possible fixtures...'));
@@ -24,11 +25,13 @@ class TddControllerTestTask extends TestTask {
 		} elseif ($this->interactive) {
 			$this->getUserFixtures();
 		}
+		$primaryModel = $testSubject->modelClass;
+
 		App::uses($fullClassName, $realType);
 
 		$methods = array();
 		if (class_exists($fullClassName, true)) {
-			$methods = $this->getTestableMethods($fullClassName,strtolower($className));
+			$methods = $this->getTestableMethods($fullClassName, strtolower($className));
 		}
 		$mock = $this->hasMockClass($type, $fullClassName);
 		$construction = $this->generateConstructor($type, $fullClassName, $className, $components);
@@ -38,24 +41,42 @@ class TddControllerTestTask extends TestTask {
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
 		$this->Template->set(compact(
-		'className', 'methods', 'type', 'fullClassName', 'mock', 'construction', 'realType'
+		'className', 'methods', 'components', 'type', 'fullClassName', 'mock', 'construction', 'realType','primaryModel'
 		));
 		$out = $this->Template->generate('classes', 'controller_test');
 		$outView = $this->Template->generate('classes', 'controller_view_test');
 		$outVars = $this->Template->generate('classes', 'controller_vars_test');
 
-		$filename = $this->testCaseFileName($type, $className);
+		$filename = $this->testCaseFileName($type, $fullClassName);
 		$made = $this->createFile($filename, $out);
 		if ($made) {
-			$this->createFile($this->testCaseFileName($type, $className, 'Vars'), $outVars);
-			$this->createFile($this->testCaseFileName($type, $className, 'View'), $outView);
+			$this->createFile($this->testCaseFileName($type, $fullClassName, 'Vars'), $outVars);
+			$this->createFile($this->testCaseFileName($type, $fullClassName, 'View'), $outView);
 			return $out;
 		}
 		return false;
 	}
 
 	public function generateConstructor($type, $fullClassName, $className, $components) {
-		return '$this->generate("' . $className . '");' . PHP_EOL;
+		$ret = '$this->generate("' . $className . '"';
+		if ($components && count($components)) {
+			$ret .= ', array(' . PHP_EOL . "\t\t\t'components' => array(" . PHP_EOL . "\t\t\t";
+			foreach ($components as $c) {
+				switch ($c) {
+					case 'Auth':
+						$content = "'$c' => array('isAuthorized')";
+						break;
+					default:
+						$content = "'$c'";
+				}
+				$ret .= "\t$content," . PHP_EOL . "\t\t\t";
+			}
+			$ret .= ")" . PHP_EOL . "\t\t));" . PHP_EOL;
+		} else {
+			$ret .= ');' . PHP_EOL;
+		}
+
+		return $ret;
 	}
 
 	public function getTestableMethods($className, $urlName) {
@@ -65,7 +86,21 @@ class TddControllerTestTask extends TestTask {
 		$out = array();
 		foreach ($thisMethods as $method) {
 			if (substr($method, 0, 1) != '_' && $method != strtolower($className)) {
-				$out[] = array('name' => $method, 'action' => '/'.$urlName.'/'.str_replace('_','/',$method));
+				$type = $method;
+				$prefix = '';
+				$parts = explode('_', $method);
+				if ($parts) {
+					$type = array_pop($parts);
+					if (count($parts)) {
+						$prefix = '/' . $parts[0];
+					}
+				}
+				$out[] = array(
+					'name' => Inflector::classify($method),
+					'action' => $prefix . '/' . $urlName . '/' . $type,
+					'original_name' => $method,
+					'type' => $type
+				);
 			}
 		}
 		return $out;
