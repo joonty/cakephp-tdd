@@ -22,8 +22,10 @@ class TddControllerTestTask extends TestTask {
 			$this->out(__d('cake_console', 'Bake is detecting possible fixtures...'));
 			$testSubject = $this->buildTestSubject($type, $fullClassName);
 			$this->generateFixtureList($testSubject);
+			$models = $testSubject->uses;
 		} elseif ($this->interactive) {
 			$this->getUserFixtures();
+			$models = array($primaryModel);
 		}
 		$primaryModel = $testSubject->modelClass;
 
@@ -34,14 +36,13 @@ class TddControllerTestTask extends TestTask {
 			$methods = $this->getTestableMethods($fullClassName, strtolower($className));
 		}
 		$mock = $this->hasMockClass($type, $fullClassName);
-		$construction = $this->generateConstructor($type, $fullClassName, $className, $components);
 
 		$this->out("\n" . __d('cake_console', 'Baking test case for %s %s ...', $className, $type), 1, Shell::QUIET);
 
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
 		$this->Template->set(compact(
-		'className', 'methods', 'components', 'type', 'fullClassName', 'mock', 'construction', 'realType','primaryModel'
+		'className', 'methods', 'components', 'type', 'fullClassName', 'mock', 'construction', 'realType','primaryModel','models'
 		));
 		$out = $this->Template->generate('classes', 'controller_test');
 		$outView = $this->Template->generate('classes', 'controller_view_test');
@@ -55,28 +56,6 @@ class TddControllerTestTask extends TestTask {
 			return $out;
 		}
 		return false;
-	}
-
-	public function generateConstructor($type, $fullClassName, $className, $components) {
-		$ret = '$this->generate("' . $className . '"';
-		if ($components && count($components)) {
-			$ret .= ', array(' . PHP_EOL . "\t\t\t'components' => array(" . PHP_EOL . "\t\t\t";
-			foreach ($components as $c) {
-				switch ($c) {
-					case 'Auth':
-						$content = "'$c' => array('isAuthorized')";
-						break;
-					default:
-						$content = "'$c'";
-				}
-				$ret .= "\t$content," . PHP_EOL . "\t\t\t";
-			}
-			$ret .= ")" . PHP_EOL . "\t\t));" . PHP_EOL;
-		} else {
-			$ret .= ');' . PHP_EOL;
-		}
-
-		return $ret;
 	}
 
 	public function getTestableMethods($className, $urlName) {

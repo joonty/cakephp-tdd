@@ -40,11 +40,11 @@ if (!$isScaffold) {
 class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>AppController {
 
 <?php if ($isScaffold): ?>
-/**
- * Scaffold
- *
- * @var mixed
- */
+	/**
+	 * Scaffold
+	 *
+	 * @var mixed
+	 */
 	public $scaffold;
 <?php else: ?>
 <?php

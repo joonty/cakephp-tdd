@@ -40,6 +40,43 @@ class TddControllerTestCase extends ControllerTestCase {
 		Cache::drop($config);
 		Cache::config($config,array('engine'=>'Tdd.ArrayCache'));
 	}
+
+	/**
+	 * Get all records from a fixture.
+	 *
+	 * To get a single record, use {@link TddControllerTestCase::fixtureRecord() fixtureRecord()}.
+	 *
+	 * @param string $name Fixture name, e.g. user ("app." prefix not required)
+	 * @return array All fixture records
+	 */
+	public function fixtureData($name) {
+		return TddTestHelper::getAllFixtureRecords($name);
+	}
+
+	/**
+	 * Get a single record from a fixture.
+	 *
+	 * Throws an exception if the fixture or record doesn't exist.
+	 *
+	 * @param string $name Fixture name, e.g. user ("app." prefix not required)
+	 * @param int $index OPTIONAL Array offset for the desired record, defaults to the first
+	 * @return array Fixture record
+	 */
+	public function fixtureRecord($name,$index = 0) {
+		return TddTestHelper::getFixtureRecord($name, $index);
+	}
+
+	/**
+	 * Create a new (hopefully) unique record, using and modifiying existing fixture records.
+	 *
+	 * The "id" field is removed, so that it can be used for adding. Please note
+	 * that this only works if the table primary key is actually called "id".
+	 *
+	 * @param string $name Fixture name, e.g. user ("app." prefix not required)
+	 */
+	public function newFixtureRecord($name) {
+		return TddTestHelper::getNewFixtureRecord($name);
+	}
 }
 
 ?>

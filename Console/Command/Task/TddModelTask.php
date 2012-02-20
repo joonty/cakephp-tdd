@@ -21,11 +21,12 @@ class TddModelTask extends ModelTask {
 		return $this->TddTest->bake('Model', $className);
 	}
 
-	public function bakeFixture($className, $useTable = null,$data) {
+	public function bakeFixture($className, $useTable = null,$data = array()) {
+		$this->Fixture->params['count'] = 10;
 		$this->Fixture->interactive = $this->interactive;
 		$this->Fixture->connection = $this->connection;
 		$this->Fixture->plugin = $this->plugin;
-		$this->Fixture->bake($className, $useTable,array('schema'=>$className));
+		$this->Fixture->bake($className, $useTable,array('schema'=>$className,));
 	}
 
 	public function bake($name,$data = array()) {
