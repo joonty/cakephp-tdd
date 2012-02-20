@@ -44,7 +44,39 @@ class <?php echo $fullClassName; ?>ViewTestCase extends TddControllerTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this-><?php echo $className . ' = ' . $construction; ?>
+		$this-><?php echo $className?> = $this->generate('<?php echo $className ?>'<?php if (count($components)==0):?>);<?php else: ?>, array(
+			'components' => array(
+<?php foreach ($components as $c) {
+	switch ($c) {
+
+		//Always skip authorisation
+		case 'Auth':
+			echo <<<EOD
+				'Auth' => array('isAuthorized'),
+
+EOD;
+			break;
+
+		//Do nothing for the session - use ArraySession for mocking
+		case 'Session':
+			break;
+		default:
+			echo <<<EOD
+				'$c',
+
+EOD;
+	}
+}
+?>
+			)
+		));
+<?php endif;?>
+<?php if (in_array('Auth',$components)): ?>
+		$this-><?php echo $className ?>->Auth
+			->expects($this->any())
+			->method('isAuthorized')
+			->will($this->returnValue(true));
+<?php endif; ?>
 	}
 
 	/**
@@ -59,6 +91,70 @@ class <?php echo $fullClassName; ?>ViewTestCase extends TddControllerTestCase {
 	}
 
 <?php foreach ($methods as $method): ?>
+<?php switch ($method['type']):?>
+<?php case 'index':?>
+
+	/**
+	 * test<?php echo Inflector::classify($method['name']); ?> method
+	 *
+	 * @return void
+	 */
+	public function test<?php echo Inflector::classify($method['name']); ?>() {
+
+		$ret = $this->testAction(
+			'<?php echo $method['action']?>',
+			array('return' => 'view')
+		);
+
+		$html = new DOMDocument();
+		$html->loadHTML($ret);
+
+		$this->assertSelectCount('.<?php echo strtolower($className)?> table tr', 11, $html);
+	}
+<?php break;
+	case 'edit':
+	case 'view':?>
+
+	/**
+	 * test<?php echo Inflector::classify($method['name']); ?> method
+	 *
+	 * @return void
+	 */
+	public function test<?php echo Inflector::classify($method['name']); ?>() {
+		$html = $this->testAction(
+			'<?php echo $method['action']?>/1',
+			array(
+				'return'=>'view',
+				'method'=>'get'
+			)
+		);
+		$doc = new DOMDocument();
+		$doc->loadHTML($html);
+	}
+
+<?php break;
+	case 'add':?>
+
+	/**
+	 * test<?php echo Inflector::classify($method['name']); ?> method
+	 *
+	 * @return void
+	 */
+	public function test<?php echo Inflector::classify($method['name']); ?>() {
+		$html = $this->testAction(
+			'<?php echo $method['action']?>',
+			array(
+				'return'=>'view',
+				'method'=>'get'
+			)
+		);
+		$doc = new DOMDocument();
+		$doc->loadHTML($html);
+	}
+<?php break;
+	case 'delete':?>
+<?php break;
+	default:?>
 	/**
 	 * test<?php echo Inflector::classify($method['name']); ?> method
 	 *
@@ -70,8 +166,8 @@ class <?php echo $fullClassName; ?>ViewTestCase extends TddControllerTestCase {
 			array('return'=>'view')
 		);
 		$doc = new DOMDocument();
-		$doc->loadHTMLString($html);
+		$doc->loadHTML($html);
 	}
-
+<?php endswitch;?>
 <?php endforeach;?>
 }
