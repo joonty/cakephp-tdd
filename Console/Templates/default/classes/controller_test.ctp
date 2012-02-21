@@ -18,8 +18,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 echo "<?php\n";
-echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n";
 ?>
+/**
+ * Contains a test case for <?php echo $fullClassName?>.
+ *
+ * @subpackage Tests
+ * @copyright Copyright (c) 22 Blue 2012
+ */
 App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 
 /**
@@ -47,8 +52,6 @@ class <?php echo $fullClassName; ?>TestCase extends TddControllerTestCase {
 
 	/**
 	 * setUp method
-	 *
-	 * @return void
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -90,8 +93,6 @@ EOD;
 
 	/**
 	 * tearDown method
-	 *
-	 * @return void
 	 */
 	public function tearDown() {
 		unset($this-><?php echo $className;?>);
@@ -163,7 +164,7 @@ EOD;
 <?php break;
 	case "view":?>
 	/**
-	 * test<?php echo $method['name'] ?> method
+	 * Check that an exception is thrown with an invalid ID.
 	 *
 	 * @dataProvider provideInvalidIds
 	 * @expectedException NotFoundException
@@ -178,6 +179,8 @@ EOD;
 	case "add":?>
 
 	/**
+	 * Test that the add method fails with an invalid data set.
+	 *
 	 * @dataProvider provideInvalidData
 	 */
 	public function test<?php echo $method['name']?>FailsWithInvalidData($data) {
@@ -189,6 +192,12 @@ EOD;
 		$this->assertContains("could not be saved", $flash);
 	}
 
+	/**
+	 * Test that data passed to the add method is saved in the database.
+	 *
+	 * A new data set is automatically generated, and then retrieved from the database.
+	 * The values are then checked against eachother.
+	 */
 	public function test<?php echo $method['name']?>SavesData() {
 		//You might want to create your own data, rather than using newFixureRecord()
 		$postData = array('<?php echo $primaryModel?>'=>$this->newFixtureRecord('<?php echo strtolower($primaryModel)?>'));
@@ -213,7 +222,7 @@ EOD;
         case "edit":?>
 
 	/**
-	 * test<?php echo $method['name'] ?> method
+	 * Check than an exception is thrown with a non-existent ID.
 	 *
 	 * @dataProvider provideInvalidIds
 	 * @expectedException NotFoundException
@@ -225,6 +234,27 @@ EOD;
 		);
 	}
 
+	/**
+	 * Pass invalid data to the edit command and checks that it fails.
+	 *
+	 * A session flash message is stored, which should say that the data couldn't
+	 * be saved.
+	 *
+	 * @todo Pass data that will fail the model's validation criteria to test this method
+	 */
+	public function test<?php echo $method['name']?>FailsWithInvalidData() {
+		$this->markTestIncomplete("Pass some invalid data to this test");
+		$this->testAction(
+			'<?php echo $method['action']?>',
+			array('data'=>$data)
+		);
+		$flash = $this->controller->Session->read('Message.flash.message');
+		$this->assertContains("could not be saved", $flash);
+	}
+
+	/**
+	 * Check that a valid data set is updated in the database.
+	 */
 	public function test<?php echo $method['name'] ?>ModifiesData() {
 		$id = 1;
 
@@ -246,6 +276,8 @@ EOD;
 	}
 
 	/**
+	 * Check that data is read from the database when GET method is used.
+	 *
 	 * @dataProvider provideIds
 	 */
 	public function test<?php echo $method['name'] ?>WithGetMethodDoesARead($id) {
@@ -262,7 +294,7 @@ EOD;
         case "delete":?>
 
 	/**
-	 * test<?php echo $method['name'] ?> method
+	 * Check that an exception is thrown with an invalid HTTP method.
 	 *
 	 * @expectedException MethodNotAllowedException
 	 */
@@ -277,7 +309,7 @@ EOD;
 	}
 
 	/**
-	 * test<?php echo $method['name'] ?> method
+	 * Check that an exception is thrown with an invalid ID.
 	 *
 	 * @dataProvider provideInvalidIds
 	 * @expectedException NotFoundException
@@ -293,9 +325,7 @@ EOD;
 	}
 
 	/**
-	 * test<?php echo $method['name'] ?> method
-	 *
-	 * Test that the delete method actually removes the data from the database.
+	 * Test that the delete method removes the data from the database.
 	 *
 	 * @dataProvider provideDeleteIds
 	 */

@@ -18,8 +18,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 echo "<?php\n";
-echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n";
 ?>
+/**
+ * Contains a test case for <?php echo $fullClassName?>.
+ *
+ * @subpackage Tests
+ * @copyright Copyright (c) 22 Blue 2012
+ */
 App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 
 /**
@@ -38,8 +43,6 @@ class <?php echo $fullClassName; ?>ViewTestCase extends TddControllerTestCase {
 <?php endif; ?>
 	/**
 	 * setUp method
-	 *
-	 * @return void
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -81,8 +84,6 @@ EOD;
 
 	/**
 	 * tearDown method
-	 *
-	 * @return void
 	 */
 	public function tearDown() {
 		unset($this-><?php echo $className;?>);
@@ -95,9 +96,7 @@ EOD;
 <?php case 'index':?>
 
 	/**
-	 * test<?php echo Inflector::classify($method['name']); ?> method
-	 *
-	 * @return void
+	 * Test that the output HTML for the index action is valid, and can be loaded by DOMDocument.
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 
@@ -116,9 +115,7 @@ EOD;
 	case 'view':?>
 
 	/**
-	 * test<?php echo Inflector::classify($method['name']); ?> method
-	 *
-	 * @return void
+	 * Test that the output HTML is valid, and can be loaded by DOMDocument.
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$html = $this->testAction(
@@ -136,9 +133,7 @@ EOD;
 	case 'add':?>
 
 	/**
-	 * test<?php echo Inflector::classify($method['name']); ?> method
-	 *
-	 * @return void
+	 * Test that the output HTML for the add action is valid, and can be loaded by DOMDocument.
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$html = $this->testAction(
@@ -156,9 +151,7 @@ EOD;
 <?php break;
 	default:?>
 	/**
-	 * test<?php echo Inflector::classify($method['name']); ?> method
-	 *
-	 * @return void
+	 * Test that the output HTML is valid, and can be loaded by DOMDocument.
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$html = $this->testAction(

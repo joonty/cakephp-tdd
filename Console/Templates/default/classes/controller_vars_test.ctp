@@ -18,8 +18,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 echo "<?php\n";
-echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n";
 ?>
+/**
+ * Contains a test case for <?php echo $fullClassName?>.
+ *
+ * @subpackage Tests
+ * @copyright Copyright (c) 22 Blue 2012
+ */
 App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 
 /**
@@ -38,8 +43,6 @@ class <?php echo $fullClassName; ?>VarsTestCase extends TddControllerTestCase {
 <?php endif; ?>
 	/**
 	 * setUp method
-	 *
-	 * @return void
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -81,8 +84,6 @@ EOD;
 
 	/**
 	 * tearDown method
-	 *
-	 * @return void
 	 */
 	public function tearDown() {
 		unset($this-><?php echo $className;?>);
@@ -95,9 +96,7 @@ EOD;
 <?php case 'index':?>
 
 	/**
-	 * test<?php echo Inflector::classify($method['name']) ?> method
-	 *
-	 * @return void
+	 * Check that the index action sends the correct set of variables to the view.
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
@@ -112,9 +111,7 @@ EOD;
 	case 'view':?>
 
 	/**
-	 * test<?php echo Inflector::classify($method['name']); ?> method
-	 *
-	 * @return void
+	 * Check that the view action sends the correct set of variables to the view.
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
@@ -131,9 +128,9 @@ EOD;
 	case 'edit':?>
 
 	/**
-	 * test<?php echo Inflector::classify($method['name']); ?> method
+	 * Check that the edit action sends the correct set of variables to the view.
 	 *
-	 * @return void
+	 * @todo Make some assertions to complete the testyy
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
@@ -143,14 +140,15 @@ EOD;
 				'method' => 'get'
 			)
 		);
+		$this->markTestIncomplete("Assertions required to complete test");
 	}
 <?php break;
 	case 'add':?>
 
 	/**
-	 * test<?php echo Inflector::classify($method['name']); ?> method
+	 * Check that the add action sends the correct set of variables to the view.
 	 *
-	 * @return void
+	 * @todo Make some assertions to complete the testyy
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
@@ -160,6 +158,7 @@ EOD;
 				'method' => 'get'
 			)
 		);
+		$this->markTestIncomplete("Assertions required to complete test");
 	}
 <?php break;
 	case 'delete':
@@ -167,15 +166,16 @@ EOD;
 	default:?>
 
 	/**
-	 * test<?php echo Inflector::classify($method['name']); ?> method
+	 * Check that the action sends the correct set of variables to the view.
 	 *
-	 * @return void
+	 * @todo Make some assertions to complete the testyy
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
 			'<?php echo $method['action']?>',
 			array('return'=>'vars')
 		);
+		$this->markTestIncomplete("Assertions required to complete test");
 	}
 
 <?php endswitch;?>
