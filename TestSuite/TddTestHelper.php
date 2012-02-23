@@ -63,7 +63,11 @@ class TddTestHelper {
 					break;
 				default:
 					if (is_numeric($v)) {
-						$ret[$n] = $v+1;
+						if ($v == 1) {
+							$ret[$n] = $v;
+						} else {
+							$ret[$n] = $v+1;
+						}
 					} else {
 						$ret[$n] = strrev($v);
 					}
