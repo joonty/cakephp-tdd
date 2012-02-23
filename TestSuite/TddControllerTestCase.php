@@ -10,6 +10,7 @@
 
 App::uses('ControllerTestCase','TestSuite');
 App::uses('CakeSession','Model/Datasource');
+App::uses('SessionMockComponent','Tdd.Controller/Component');
 /**
  * TddTestCase description
  *
@@ -21,7 +22,7 @@ class TddControllerTestCase extends ControllerTestCase {
 
 		// Just use arrays to hold session data
 		//Configure::write('Session.handler.engine', 'Tdd.ArraySession');
-		CakeSession::clear();
+		//CakeSession::clear();
 
 		// Just use arrays to hold cached data
 		Cache::drop('default');
@@ -76,6 +77,82 @@ class TddControllerTestCase extends ControllerTestCase {
 	 */
 	public function newFixtureRecord($name) {
 		return TddTestHelper::getNewFixtureRecord($name);
+	}
+
+	public function generate($controller, $mocks = array()) {
+		list($plugin, $controller) = pluginSplit($controller);
+		if ($plugin) {
+			App::uses($plugin . 'AppController', $plugin . '.Controller');
+			$plugin .= '.';
+		}
+		App::uses($controller . 'Controller', $plugin . 'Controller');
+		if (!class_exists($controller.'Controller')) {
+			throw new MissingControllerException(array(
+				'class' => $controller . 'Controller',
+				'plugin' => substr($plugin, 0, -1)
+			));
+		}
+		ClassRegistry::flush();
+
+		$mocks = array_merge_recursive(array(
+			'methods' => array('_stop'),
+			'models' => array(),
+			'components' => array()
+		), (array)$mocks);
+
+		list($plugin, $name) = pluginSplit($controller);
+		$_controller = $this->getMock($name.'Controller', $mocks['methods'], array(), '', false);
+		$_controller->name = $name;
+		$request = $this->getMock('CakeRequest');
+		$response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$_controller->__construct($request, $response);
+
+		$config = ClassRegistry::config('Model');
+		foreach ($mocks['models'] as $model => $methods) {
+			if (is_string($methods)) {
+				$model = $methods;
+				$methods = true;
+			}
+			if ($methods === true) {
+				$methods = array();
+			}
+			ClassRegistry::init($model);
+			list($plugin, $name) = pluginSplit($model);
+			$config = array_merge((array)$config, array('name' => $model));
+			$_model = $this->getMock($name, $methods, array($config));
+			ClassRegistry::removeObject($name);
+			ClassRegistry::addObject($name, $_model);
+		}
+
+		foreach ($mocks['components'] as $component => $methods) {
+			if (is_string($methods)) {
+				$component = $methods;
+				$methods = true;
+			}
+			if ($component == 'Session') {
+				continue;
+			}
+			if ($methods === true) {
+				$methods = array();
+			}
+			list($plugin, $name) = pluginSplit($component, true);
+			$componentClass = $name . 'Component';
+			App::uses($componentClass, $plugin . 'Controller/Component');
+			if (!class_exists($componentClass)) {
+				throw new MissingComponentException(array(
+					'class' => $componentClass
+				));
+			}
+			$_component = $this->getMock($componentClass, $methods, array(), '', false);
+			$_controller->Components->set($name, $_component);
+		}
+		$_controller->Components->set('Session',new SessionMockComponent(new ComponentCollection));
+
+		$_controller->constructClasses();
+		$this->__dirtyController = false;
+
+		$this->controller = $_controller;
+		return $this->controller;
 	}
 }
 

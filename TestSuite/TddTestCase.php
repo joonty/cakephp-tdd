@@ -21,7 +21,8 @@ class TddTestCase extends CakeTestCase {
 
 		// Just use arrays to hold session data
 		//Configure::write('Session.handler.engine', 'Tdd.ArraySession');
-		CakeSession::clear();
+	
+		//CakeSession::clear();
 
 		// Just use arrays to hold cached data
 		Cache::drop('default');
