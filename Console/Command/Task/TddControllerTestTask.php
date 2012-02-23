@@ -29,7 +29,7 @@ class TddControllerTestTask extends TestTask {
 		}
 		$primaryModel = $testSubject->modelClass;
 
-		App::uses($fullClassName, $realType);
+		App::uses($fullClassName, 'app.'.$realType);
 
 		$methods = array();
 		if (class_exists($fullClassName, true)) {
