@@ -57,7 +57,7 @@ class <?php echo $fullClassName; ?>TestCase extends TddTestCase {
 
 		parent::tearDown();
 	}
-
+<?php if (count($methods)):?>
 <?php foreach ($methods as $method): ?>
 	/**
 	 * test<?php echo Inflector::classify($method); ?> method
@@ -69,4 +69,9 @@ class <?php echo $fullClassName; ?>TestCase extends TddTestCase {
 	}
 
 <?php endforeach;?>
+<?php else:?>
+	public function testEmpty() {
+		$this->markTestIncomplete("No test methods yet");
+	}
+<?php endif;?>
 }
