@@ -69,6 +69,14 @@ class <?php echo $fullClassName; ?>TestCase extends TddControllerTestCase {
 EOD;
 			break;
 
+		//Always allow ACL
+		case 'Acl':
+			echo <<<EOD
+				'Acl' => array('check'),
+
+EOD;
+			break;
+
 		//Do nothing for the session - use ArraySession for mocking
 		case 'Session':
 			break;
@@ -87,6 +95,13 @@ EOD;
 		$this-><?php echo $className ?>->Auth
 			->expects($this->any())
 			->method('isAuthorized')
+			->will($this->returnValue(true));
+<?php endif; ?>
+
+<?php if (in_array('Acl',$components)): ?>
+		$this-><?php echo $className ?>->Acl
+			->expects($this->any())
+			->method('check')
 			->will($this->returnValue(true));
 <?php endif; ?>
 	}
