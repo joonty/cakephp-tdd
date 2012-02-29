@@ -1,23 +1,44 @@
 #!/bin/bash
 opath="/usr/local/bin/cake"
+tpath="/usr/local/bin/caketest"
 if test -f $opath
 then
 	echo "A file already exists at $opath, please remove it and re-run this script"
 	exit 1
 fi
+if test -f $tpath
+then
+	echo "A file already exists at $tpath, please remove it and re-run this script"
+	exit 2
+fi
 sname=`basename $0`
 if [ "`echo $0 | cut -c1`" = "/" ]; then
-  spath=`dirname $0`
+	spath=`dirname $0`
 else
-  spath=`pwd`/`echo $0 | sed -e s/$sname//`
+	stmp=`echo $0 | sed -e s/$sname//`
+	if [ $stmp == "./" ]
+	then
+		stmp=""
+	fi
+	spath=`pwd`/$stmp
 fi
 owner=`ls -l $spath | grep $sname | awk '{print $3}'`
 echo "Creating a symbolic link for the cake console at $opath, with owner $owner:$owner"
-if ln -s $spath/cake.php $opath
+if ln -s ${spath}cake.php $opath
 then
-	chown $owner:$owner $opath 
+	chown $owner:$owner $opath
 	chmod +x $opath
 else
-	echo "Failed to create a symbolic link from $spath/cake.php to $opath";
-	exit 2
+	echo "Failed to create a symbolic link from ${spath}cake.php to $opath";
+	exit 3
+fi
+
+echo "Copying the handy Tdd test console at $tpath, with owner $owner:$owner"
+if cp $spath/caketest $tpath
+then
+	chown $owner:$owner $tpath
+	chmod +x $tpath
+else
+	echo "Failed to copy $spath/caketest to $tpath";
+	exit 4
 fi
