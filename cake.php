@@ -2,7 +2,8 @@
 <?php
 $cwd = getcwd();
 $dirs = array_reverse(explode(DIRECTORY_SEPARATOR, $cwd));
-
+$uid = getmyuid();
+$user = get_current_user();
 $cdup = null;
 foreach ($dirs as $idx => $dir) {
 	if ($dir == 'app') {
@@ -31,8 +32,35 @@ if ($argc > 1) {
 		$argv[1] = 'Tdd.test';
 	}
 }
-system('echo "PASS" | sudo -u root -S /bin/chown -R '.posix_getuid().':'.posix_getuid().' tmp');
-chmodr('tmp', 0777);
+$tmp_files = array();
+exec('ls -Arl tmp', $tmp_files);
+$require_chown = false;
+
+array_shift($tmp_files);
+foreach ($tmp_files as $f) {
+	$f_parts = explode(' ', $f);
+	$f_user = $f_parts[2];
+	if ($f_user != $user) {
+		$require_chown = true;
+		echo "Incorrect user detected for some of the temporary files\n";
+		break;
+	}
+}
+
+if ($require_chown) {
+	echo "Your root password is required to run chown on the temporary directory\n";
+	$pass = null;
+	while (is_null($pass)) {
+		$pass = passwordPrompt();
+	}
+	$retval = 0;
+	$op = array();
+	exec('echo "' . $pass . '" | sudo -u root -S /bin/chown -R ' . $uid . ':' . $uid . ' tmp 2>/dev/null', $op, $retval);
+	if ($retval != 0) {
+		die("Invalid root password\n");
+	}
+	chmodr('tmp', 0777);
+}
 include "Console/cake.php";
 
 function chmodr($path, $filemode) {
@@ -58,5 +86,18 @@ function chmodr($path, $filemode) {
 		return TRUE;
 	else
 		return FALSE;
+}
+
+function passwordPrompt() {
+	passthru('set /p pass=Password: ');
+	echo 'Password: ';
+	$pwd = preg_replace('/\r?\n$/', '', `stty -echo; head -n1 ; stty echo`);
+	echo "\n";
+	echo "Your password was: {$pwd}.\n";
+	if (strlen($pwd)) {
+		return $pwd;
+	} else {
+		return null;
+	}
 }
 ?>
