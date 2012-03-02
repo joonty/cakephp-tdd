@@ -33,12 +33,15 @@ if ($argc > 1) {
 	}
 }
 $tmp_files = array();
-exec('ls -Arl tmp', $tmp_files);
+exec('ls -ARl tmp', $tmp_files);
 $require_chown = false;
 
 array_shift($tmp_files);
 foreach ($tmp_files as $f) {
 	$f_parts = explode(' ', $f);
+	if (count($f_parts) < 3) {
+		continue;
+	}
 	$f_user = $f_parts[2];
 	if ($f_user != $user) {
 		$require_chown = true;
@@ -93,7 +96,6 @@ function passwordPrompt() {
 	echo 'Password: ';
 	$pwd = preg_replace('/\r?\n$/', '', `stty -echo; head -n1 ; stty echo`);
 	echo "\n";
-	echo "Your password was: {$pwd}.\n";
 	if (strlen($pwd)) {
 		return $pwd;
 	} else {
