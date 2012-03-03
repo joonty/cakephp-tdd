@@ -51,7 +51,7 @@ class <?php echo $fullClassName; ?>TestCase extends TddControllerTestCase {
 	***************/
 
 	/**
-	 * setUp method
+	 * setUp method, which generates a stub <?php echo $className?> controller.
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -123,6 +123,7 @@ EOD;
 
 	/**
 	 * Return a couple of IDs that are entered by the fixture.
+	 * @return array
 	 */
 	public function provideIds() {
 		return array(
@@ -133,6 +134,7 @@ EOD;
 
 	/**
 	 * Return a new ID for testing a delete, each time this provider is called.
+	 * @return array
 	 */
 	public function provideDeleteIds() {
 		self::$deleteIncr++;
@@ -143,10 +145,11 @@ EOD;
 
 	/**
 	 * Return some examples of invalid IDs.
+	 * @return array
 	 */
 	public function provideInvalidIds() {
 		return array(
-			array(''),
+			array(-1),
 			array(12345),
 			array('notanid')
 		);
@@ -243,7 +246,7 @@ EOD;
 	 * @expectedException NotFoundException
 	 */
 	public function test<?php echo $method['name']?>ThrowsExceptionWithInvalidId($id) {
-		$retval = $this->testAction(
+		$this->testAction(
 			'<?php echo $method['action']?>/'.$id,
 			array('return'=>'result')
 		);
