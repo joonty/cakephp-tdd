@@ -62,8 +62,8 @@ if ($require_chown) {
 	if ($retval != 0) {
 		die("Invalid root password\n");
 	}
-	chmodr('tmp', 0777);
 }
+chmodr('tmp', 0777);
 include "Console/cake.php";
 
 function chmodr($path, $filemode) {
