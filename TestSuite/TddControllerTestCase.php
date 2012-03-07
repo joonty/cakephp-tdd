@@ -124,15 +124,15 @@ class TddControllerTestCase extends ControllerTestCase {
 			ClassRegistry::addObject($name, $_model);
 		}
 
-		foreach ($mocks['components'] as $component => $methods) {
-			if (is_string($methods)) {
-				$component = $methods;
+		foreach ($mocks['components'] as $component => $contents) {
+			if (is_string($contents)) {
+				$component = $contents;
 				$methods = true;
 			}
 			if ($component == 'Session') {
 				continue;
 			}
-			if ($methods === true) {
+			if ($contents === true) {
 				$methods = array();
 			}
 			list($plugin, $name) = pluginSplit($component, true);
@@ -143,8 +143,18 @@ class TddControllerTestCase extends ControllerTestCase {
 					'class' => $componentClass
 				));
 			}
-			$_component = $this->getMock($componentClass, $methods, array(), '', false);
-			$_controller->Components->set($name, $_component);
+			if (is_array($contents) && array_key_exists('methods', $contents)) {
+				$methods = $contents['methods'];
+			} else {
+				$methods = array();
+			}
+			if (is_array($contents) && array_key_exists('class',$contents)) {
+
+				$_controller->Components->set($name, new $contents['class']($_controller->Components));
+			} else {
+				$_component = $this->getMock($componentClass, $methods, array(), '', false);
+				$_controller->Components->set($name, $_component);
+			}
 		}
 		$_controller->Components->set('Session',new SessionMockComponent(new ComponentCollection));
 
