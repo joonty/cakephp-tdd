@@ -10,19 +10,19 @@
 
 App::uses('CakeTestCase','TestSuite');
 App::uses('CakeSession','Model/Datasource');
+App::uses('MockLoader', 'Tdd.Lib');
 /**
  * TddTestCase description
  *
  */
 class TddTestCase extends CakeTestCase {
 
+	protected $loader;
+
 	public function setUp() {
 		parent::setUp();
 
-		// Just use arrays to hold session data
-		//Configure::write('Session.handler.engine', 'Tdd.ArraySession');
-
-		//CakeSession::clear();
+		$this->loader = new MockLoader();
 
 		// Just use arrays to hold cached data
 		Cache::drop('default');

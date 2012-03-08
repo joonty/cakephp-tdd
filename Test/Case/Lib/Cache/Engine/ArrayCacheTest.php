@@ -13,7 +13,7 @@ App::uses('ArrayCacheEngine','Tdd.Cache/Engine');
  * ArrayCacheTestCase is a test case for the ArrayCache Engine.
  *
  */
-class ArrayCacheTestCase extends TddTestCase {
+class ArrayCacheTestCase extends CakeTestCase {
 	/**
 	 * Subject under test
 	 * @var ArrayCacheEngine

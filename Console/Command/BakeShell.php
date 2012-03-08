@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Command-line code generation utility to automate programmer chores.
  *
@@ -19,7 +20,6 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('AppShell', 'Console/Command');
 App::uses('Model', 'Model');
 
@@ -35,25 +35,25 @@ App::uses('Model', 'Model');
  */
 class BakeShell extends AppShell {
 
-/**
- * Contains tasks to load and instantiate
- *
- * @var array
- */
+	/**
+	 * Contains tasks to load and instantiate
+	 *
+	 * @var array
+	 */
 	public $tasks = array('Project', 'DbConfig', 'Tdd.TddModel', 'Tdd.TddController', 'View', 'Plugin', 'Fixture', 'Test');
 
-/**
- * The connection being used.
- *
- * @var string
- */
+	/**
+	 * The connection being used.
+	 *
+	 * @var string
+	 */
 	public $connection = 'default';
 
-/**
- * Assign $this->connection to the active task if a connection param is set.
- *
- * @return void
- */
+	/**
+	 * Assign $this->connection to the active task if a connection param is set.
+	 *
+	 * @return void
+	 */
 	public function startup() {
 		parent::startup();
 		Configure::write('debug', 2);
@@ -66,11 +66,11 @@ class BakeShell extends AppShell {
 		}
 	}
 
-/**
- * Override main() to handle action
- *
- * @return mixed
- */
+	/**
+	 * Override main() to handle action
+	 *
+	 * @return mixed
+	 */
 	public function main() {
 		if (!is_dir($this->DbConfig->path)) {
 			$path = $this->Project->execute();
@@ -88,13 +88,14 @@ class BakeShell extends AppShell {
 		}
 		$this->out(__d('cake_console', 'TDD Bake Shell'));
 		$this->hr();
+		$this->checkMockDir();
 		$this->out(__d('cake_console', '[D]atabase Configuration'));
 		$this->out(__d('cake_console', '[M]odel'));
 		$this->out(__d('cake_console', '[V]iew'));
 		$this->out(__d('cake_console', '[C]ontroller'));
 		$this->out(__d('cake_console', '[P]roject'));
 		$this->out(__d('cake_console', '[Q]uit'));
-		$this->out(__d('cake_console', PHP_EOL.'(Note: tests and fixtures are generated simultaneously)'));
+		$this->out(__d('cake_console', PHP_EOL . '(Note: tests and fixtures are generated simultaneously)'));
 
 		$classToBake = strtoupper($this->in(__d('cake_console', 'What would you like to Bake?'), array('D', 'M', 'V', 'C', 'P', 'Q')));
 		switch ($classToBake) {
@@ -129,11 +130,11 @@ class BakeShell extends AppShell {
 		$this->main();
 	}
 
-/**
- * Quickly bake the MVC
- *
- * @return void
- */
+	/**
+	 * Quickly bake the MVC
+	 *
+	 * @return void
+	 */
 	public function all() {
 		$this->out('Bake All');
 		$this->hr();
@@ -195,17 +196,16 @@ class BakeShell extends AppShell {
 		return $this->_stop();
 	}
 
-/**
- * get the option parser.
- *
- * @return void
- */
+	/**
+	 * get the option parser.
+	 *
+	 * @return void
+	 */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(__d('cake_console',
-			'The TDD Bake script generates controllers, views and models for your application, along with tests.'
-			. ' If run with no command line arguments, Bake guides the user through the class creation process.'
-			. ' You can customize the generation process by telling Bake where different parts of your application are using command line arguments.'
+		return $parser->description(__d('cake_console', 'The TDD Bake script generates controllers, views and models for your application, along with tests.'
+		. ' If run with no command line arguments, Bake guides the user through the class creation process.'
+		. ' You can customize the generation process by telling Bake where different parts of your application are using command line arguments.'
 		))->addSubcommand('all', array(
 			'help' => __d('cake_console', 'Bake a complete MVC. optional <name> of a Model'),
 		))->addSubcommand('project', array(
@@ -239,4 +239,18 @@ class BakeShell extends AppShell {
 		));
 	}
 
+	protected function checkMockDir() {
+		$mockDir =  APP.'Test'.DS.'Mock'.DS;
+		if (!is_dir($mockDir)) {
+
+			$createMock = strtoupper($this->in(__d('cake_console', 'You don\'t have a Mock directory under your Test directory. Would you like to create one?'), array('Y','N')));
+			if ($createMock == 'Y') {
+				if (mkdir($mockDir)) {
+					$this->out(__d('cake_console',"Created directory for Mock classes at '$mockDir'. This can be used to hold your mock versions of classes for testing.".PHP_EOL));
+				} else {
+					$this->error(__d('cake_console',"Failed to create Mock directory at '$mockDir'. Check the permissions for this path.".PHP_EOL));
+				}
+			}
+		}
+	}
 }
