@@ -20,10 +20,8 @@ class TddControllerTestCase extends ControllerTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		// Just use arrays to hold session data
-		//Configure::write('Session.handler.engine', 'Tdd.ArraySession');
-		//CakeSession::clear();
-
+		$this->loader = new MockLoader();
+		
 		// Just use arrays to hold cached data
 		Cache::drop('default');
 		Cache::config('default', array('engine' => 'Tdd.ArrayCache'));
