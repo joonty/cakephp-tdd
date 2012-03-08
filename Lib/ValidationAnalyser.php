@@ -10,13 +10,18 @@ class InvalidValidateRulesetException extends Exception {
 	}
 }
 
+/**
+ * @author Jon Cairns <jon@joncairns.com> 
+ */
 class ValidationAnalyser {
 	
 	protected $hasValidationRules = true;
+	protected $allowNullValues = false;
 	/**
 	 * @var Model 
 	 */
 	protected $model;
+	protected $rules = array();
 	/**
 	 * Defaults applied to validation rulsets
 	 * @var array
@@ -62,19 +67,25 @@ class ValidationAnalyser {
 	 * @param array $ruleSet 
 	 */
 	protected function parseRuleSet($fieldName,$ruleSet) {
+		$this->rules[$fieldName] = array('allowEmpty'=>true,'rules'=>array());
 		foreach ($ruleSet as $index => $validator) {
 			
 			if (!is_array($validator)) {
 				$validator = array('rule' => $validator);
 			}
 			$validator = array_merge($this->default, $validator);
-			
+			if ($validator['allowEmpty'] == false) {
+				$this->rules[$fieldName]['allowEmpty'] = false;
+			}
+			if (isset($validator['rule'])) {
+				$this->rules[$fieldName]['rules'][] = $validator['rule'];
+			}
 		}
 	}
 	
 	/**
 	 * Whether the model has validation rules at all.
-	 * @return bool 
+	 * @return boolean
 	 */
 	public function hasRules() {
 		return $this->hasValidationRules;
@@ -84,15 +95,15 @@ class ValidationAnalyser {
 	 * Get an example value that fits the validation rule set for a given field.
 	 * @param string $field 
 	 */
-	public function passExample($field) {
-		
+	public function validField($field) {
+		print_r($this->rules);
 	}
 	
 	/**
 	 * Get an example value that doesn't pass the validation rule set for a field.
 	 * @param string $field 
 	 */
-	public function failExample($field) {
+	public function invalidField($field) {
 		
 	}
 }

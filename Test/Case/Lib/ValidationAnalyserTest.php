@@ -10,6 +10,10 @@ class Examplemodel extends Model {
 }
 
 class ValidationAnalyserTestCase extends CakeTestCase {
+	/**
+	 * Subject under test.
+	 * @var ValidationAnalyser
+	 */
 	protected $sut;
 	
 	public function setUp() {
@@ -21,8 +25,9 @@ class ValidationAnalyserTestCase extends CakeTestCase {
 		$this->assertTrue($this->sut->hasRules());
 	}
 	
-	public function testExampleIdIsNumeric() {
-		
+	public function testValidFieldIsNumeric() {
+		$ret = $this->sut->validField('id');
+		$this->assertTrue(is_numeric($ret),"Return value for 'id' should be numeric");
 	}
 }
 ?>
