@@ -8,10 +8,16 @@
 class ValidationRule {
 	protected $name;
 	protected $parameters;
+	protected $field;
 	
-	public function __construct($ruleName, $parameters = array()) {
+	public function __construct(ValidationField $field, $ruleName, $parameters = array()) {
+		$this->field = $field;
 		$this->name = $ruleName;
 		$this->parameters = $parameters;
+	}
+	
+	public function getField() {
+		return $this->field;
 	}
 	
 	public function getName() {

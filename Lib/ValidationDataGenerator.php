@@ -36,12 +36,35 @@ class ValidationDataGenerator {
 		if (method_exists($this, $method)) {
 			return $this->$method($rule);
 		} else {
-			throw new ValidationDataGeneratorMethodNotFound($name);
+			$rule->getField()->addWarning("Using default data for rule '".$rule->getName()."'");
+			return $this->createDefault($rule);
 		}
+	}
+	
+	protected function createDefault(ValidationRule $rule) {
+		return join(' ',$this->lipsumWords(5));
 	}
 
 	protected function createNumeric(ValidationRule $rule) {
 		return rand();
+	}
+
+	protected function createBetween(ValidationRule $rule) {
+		$lower = $rule->param();
+		$upper = $rule->param(1);
+		if (is_null($lower)) {
+			$rule->getField()->addWarning("Missing lower value for rule 'between'");
+			$lower = 0;
+		}
+		if (is_null($upper)) {
+			$rule->getField()->addWarning("Missing upper value for rule 'between'");
+			$upper = 100;
+		}
+		if ($lower > $upper) {
+			$rule->getField()->addWarning("Lower value cannot be higher than the upper value for rule 'between'");
+			$lower = $upper;
+		}
+		return rand($lower,$upper);
 	}
 
 	protected function _maxLength($rule) {

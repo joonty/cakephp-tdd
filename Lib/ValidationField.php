@@ -11,6 +11,7 @@ class ValidationField {
 	protected $fieldName;
 	protected $rules = array();
 	protected $allowEmpty = true;
+	protected $warnings = array();
 
 	/**
 	 * Defaults applied to validation rulsets
@@ -23,10 +24,24 @@ class ValidationField {
 		'on' => null
 	);
 	
+	/**
+	 * Create a new ValidationField object.
+	 * 
+	 * @param string $fieldName Name of the field requiring validations
+	 * @param mixed $ruleSet Array or string of validation rules
+	 */
 	public function __construct($fieldName,$ruleSet) {
 		$this->fieldName = $fieldName;
 		
 		$this->parseRuleSet($ruleSet);
+	}
+	
+	public function addWarning($message) {
+		$this->warnings[] = $message;
+	}
+	
+	public function getWarnings() {
+		return $this->warnings;
 	}
 	
 	public function getName() {
@@ -74,7 +89,7 @@ class ValidationField {
 			}
 		}
 		if (!$found) {
-			$this->rules[] = new ValidationRule($ruleName,$params);
+			$this->rules[] = new ValidationRule($this,$ruleName,$params);
 		}
 	}
 }

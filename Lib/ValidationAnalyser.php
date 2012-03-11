@@ -21,11 +21,20 @@ class ValidationAnalyser {
 	 * @var Model 
 	 */
 	protected $model;
-	protected $rules = array();
+	protected $fields = array();
 	
+	
+	/**
+	 * Create a new ValidationAnalyser object, bound to a given model.
+	 * 
+	 * @param Model $model 
+	 */
 	public function __construct(Model $model) {
 		$this->model = $model;
 		$this->parseRules();
+	}
+	
+	public function getWarnings() {
 	}
 	
 	/**
@@ -42,33 +51,7 @@ class ValidationAnalyser {
 			return;
 		}
 		foreach ($this->model->validate as $fieldName => $ruleSet) {
-			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
-				$ruleSet = array($ruleSet);
-			}
-			
-			$this->parseRuleSet($fieldName, $ruleSet);
-		}
-	}
-	
-	/**
-	 * Parse one or more rule sets relating to a specific field.
-	 * @param string $fieldName
-	 * @param array $ruleSet 
-	 */
-	protected function parseRuleSet($fieldName,$ruleSet) {
-		$this->rules[$fieldName] = array('allowEmpty'=>true,'rules'=>array());
-		foreach ($ruleSet as $index => $validator) {
-			
-			if (!is_array($validator)) {
-				$validator = array('rule' => $validator);
-			}
-			$validator = array_merge($this->default, $validator);
-			if ($validator['allowEmpty'] == false) {
-				$this->rules[$fieldName]['allowEmpty'] = false;
-			}
-			if (isset($validator['rule'])) {
-				$this->rules[$fieldName]['rules'][] = $validator['rule'];
-			}
+			$this->fields[$fieldName] = new ValidationField($fieldName,$ruleSet);
 		}
 	}
 	
