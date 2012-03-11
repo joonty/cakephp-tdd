@@ -41,6 +41,10 @@ class ValidationDataGenerator {
 		}
 	}
 	
+	protected function createBlank(ValidationRule $rule) {
+		return '';
+	}
+	
 	protected function createDefault(ValidationRule $rule) {
 		return join(' ',$this->lipsumWords(5));
 	}
@@ -65,6 +69,22 @@ class ValidationDataGenerator {
 			$lower = $upper;
 		}
 		return rand($lower,$upper);
+	}
+
+	protected function createRange(ValidationRule $rule) {
+		$lower = $rule->param();
+		$upper = $rule->param(1);
+		if (is_null($lower)) {
+			$lower = -1;
+		}
+		if (is_null($upper)) {
+			$upper = getrandmax();
+		}
+		if ($lower > $upper) {
+			$rule->getField()->addWarning("Lower value cannot be higher than the upper value for rule 'between'");
+			$lower = $upper;
+		}
+		return rand($lower+1,$upper-1);
 	}
 
 	protected function _maxLength($rule) {
@@ -92,10 +112,12 @@ class ValidationDataGenerator {
 		if ($param && strcasecmp($param, 'ipv6') == 0) {
 			$parts = 6;
 		}
+
 		$ip = '';
 		for ($i = 0; $i < $parts - 1; $i++) {
 			$ip.=rand(0, 255) . '.';
 		}
+
 		return $ip . rand(0, 255);
 	}
 
@@ -103,6 +125,13 @@ class ValidationDataGenerator {
 		$ends = array('com', 'co.uk', 'org', 'net', 'org.uk', 'biz', 'me');
 		$words = $this->lipsumWords(2);
 		return $words[0] . '@' . $words[1] . '.' . $ends[array_rand($ends)];
+	}
+
+	protected function createUrl(ValidationRule $rule) {
+		$protocols = array('http://','https://','http://wwww.','https://wwww.');
+		$ends = array('com', 'co.uk', 'org', 'net', 'org.uk', 'biz', 'me');
+		$words = $this->lipsumWords(1);
+		return $protocols[array_rand($protocols)].$words[0] . '.'.$ends[array_rand($ends)];
 	}
 	
 	protected function createBoolean(ValidationRule $rule) {
@@ -127,6 +156,10 @@ class ValidationDataGenerator {
 			$format = 'ymd';
 		}
 		return date($formats[$format].' H:i');
+	}
+	
+	protected function createTime() {
+		return date('H:i');
 	}
 	
 	protected function dateFormatMap() {

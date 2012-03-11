@@ -77,6 +77,27 @@ class ValidationFieldTestCase extends CakeTestCase {
 		$vf = new ValidationField('email',$rules);
 		$this->assertCount(1,$vf->rules());
 	}
+	
+	public function testNotEmptyIsAbsorbed() {
+		$vf = new ValidationField('myfield',array('rule'=>'notempty'));
+		$this->assertCount(0,$vf->rules());
+		$this->assertFalse($vf->allowEmpty());
+	}
+	
+	public function provideIncompatibleRuleTypes() {
+		return array(
+			array(array(array('rule'=>'numeric'),array('rule'=>'email'))),
+		);
+	}
+	
+	/**
+	 * @dataProvider provideIncompatibleRuleTypes 
+	 */
+	public function testIncompatibleRuleTypesAddWarning($rules) {
+		$vf = new ValidationField('myfield',$rules);
+		$warnings = $vf->getWarnings();
+		$this->assertCount(1,$warnings);
+	}
 }
 
 ?>

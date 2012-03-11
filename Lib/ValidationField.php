@@ -36,26 +36,56 @@ class ValidationField {
 		$this->parseRuleSet($ruleSet);
 	}
 	
+	/**
+	 * Add a warning message relating to this field.
+	 * 
+	 * @param string $message 
+	 */
 	public function addWarning($message) {
 		$this->warnings[] = $message;
 	}
 	
+	/**
+	 * Get any warnings created during data generation or rule parsing.
+	 * 
+	 * @return array
+	 */
 	public function getWarnings() {
 		return $this->warnings;
 	}
 	
+	/**
+	 * Get the field name.
+	 * 
+	 * @return string
+	 */
 	public function getName() {
 		return $this->fieldName;
 	}
 	
+	/**
+	 * Get a list of ValidationRules for this field.
+	 * 
+	 * @return array<ValidationRule>
+	 */
 	public function rules() {
 		return $this->rules;
 	}
 	
+	/**
+	 * Whether this field can be left empty.
+	 * 
+	 * @return boolean
+	 */
 	public function allowEmpty() {
 		return $this->allowEmpty;
 	}
 	
+	/**
+	 * Parse the set of validation rules associated with this field.
+	 * 
+	 * @param mixed $ruleSet
+	 */
 	protected function parseRuleSet($ruleSet) {
 		if (!is_array($ruleSet)) {
 			$ruleSet = array(array('rule'=>$ruleSet));
@@ -74,6 +104,19 @@ class ValidationField {
 		}
 	}
 	
+	/**
+	 * Add a validation rule to the current list for this field.
+	 * 
+	 * A new rule creates a {@link ValidationRule ValidationRule} object. Certain
+	 * rules are special case, such as notempty, minlength and maxlength. These
+	 * are not added to the list of rules, but are used elsewhere.
+	 * 
+	 * Also, some rules don't make sense with others. For instance, numeric
+	 * doesn't make sense with email. A warning is thrown if conflicting rules
+	 * are found.
+	 * 
+	 * @param mixed $rule Array or string to represent validation rule
+	 */
 	protected function addRule($rule){
 		if (is_array($rule)) {
 			$ruleName = array_shift($rule);
@@ -82,6 +125,14 @@ class ValidationField {
 			$ruleName = $rule;
 			$params = array();
 		}
+		
+		switch (strtolower($ruleName)) {
+			case 'notempty':
+				$this->allowEmpty = false;
+				return;
+				break;
+		}
+		
 		$found = false;
 		foreach ($this->rules as $r) {
 			if ($r->getName() == $ruleName) {

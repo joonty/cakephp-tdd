@@ -24,6 +24,11 @@ class ValidationDataGeneratorTestCase extends CakeTestCase {
 		return new ValidationRule($field,$rule,$params);
 	}
 	
+	public function testGetDataWithBlank() {
+		$data = $this->sut->dispatch($this->getRule('blank'));
+		$this->assertEqual("",$data,"Data must be an empty string");
+	}
+	
 	public function testGetDataWithNumeric() {
 		$data = $this->sut->dispatch($this->getRule('numeric'));
 		$this->assertTrue(is_numeric($data),"Data must be numeric");
@@ -32,6 +37,12 @@ class ValidationDataGeneratorTestCase extends CakeTestCase {
 	public function testGetDataWithBetween() {
 		$data = $this->sut->dispatch($this->getRule('between',array(5,10)));
 		$this->assertGreaterThanOrEqual(5,$data,"Data must be >= 5");
+		$this->assertLessThanOrEqual(10,$data,"Data must be <= 10");
+	}
+	
+	public function testGetDataWithRange() {
+		$data = $this->sut->dispatch($this->getRule('range',array(-1,11)));
+		$this->assertGreaterThanOrEqual(0,$data,"Data must be >= 0");
 		$this->assertLessThanOrEqual(10,$data,"Data must be <= 10");
 	}
 	
@@ -64,8 +75,15 @@ class ValidationDataGeneratorTestCase extends CakeTestCase {
 	public function testGetDataWithEmail() {
 		$data = $this->sut->dispatch($this->getRule('email'));
 		$this->assertInternalType('string',$data);
-		$this->assertRegExp('/^[a-z0-9]+@[a-z0-9]+\.[a-z.]{2,6}$/i',$data,"String should be a valid email address");
+		$this->assertTrue(Validation::email($data),"String should be a valid email address");
 	}
+	
+	public function testGetDataWithUrl() {
+		$data = $this->sut->dispatch($this->getRule('url'));
+		$this->assertInternalType('string',$data);
+		$this->assertTrue(Validation::url($data),"String should be a valid URL");
+	}
+
 
 	public function testGetDataWithAlphaNumeric() {
 		$data = $this->sut->dispatch($this->getRule('alphanumeric'));		
@@ -131,6 +149,13 @@ class ValidationDataGeneratorTestCase extends CakeTestCase {
 		$this->assertInternalType('string',$data);
 		
 		$this->assertTrue(Validation::datetime($data, 'ymd'),"Datetime failed validation");
+	}
+	
+	public function testGetDataWithTime() {
+		$data = $this->sut->dispatch($this->getRule('time'));
+		$this->assertInternalType('string',$data);
+		
+		$this->assertTrue(Validation::time($data),"Time failed validation");
 	}
 	
 	public function testGetDataWithDecimal() {
