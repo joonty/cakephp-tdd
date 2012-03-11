@@ -22,17 +22,6 @@ class ValidationAnalyser {
 	 */
 	protected $model;
 	protected $rules = array();
-	/**
-	 * Defaults applied to validation rulsets
-	 * @var array
-	 */
-	protected $default = array(
-		'allowEmpty' => null,
-		'required' => null,
-		'rule' => 'blank',
-		'last' => true,
-		'on' => null
-	);
 	
 	public function __construct(Model $model) {
 		$this->model = $model;
