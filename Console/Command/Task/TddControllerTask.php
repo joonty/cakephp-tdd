@@ -34,6 +34,7 @@ class TddControllerTask extends ControllerTask {
  * @var array
  */
 	public $tasks = array('Model', 'Tdd.TddControllerTest', 'Template', 'DbConfig', 'Project');
+	public $package = "none";
 
 
 /**
@@ -46,6 +47,7 @@ class TddControllerTask extends ControllerTask {
  * @return string Baked controller
  */
 	public function bake($controllerName, $actions = '', $helpers = null, $components = null) {
+		$this->Template->set('package',$this->package);
 		parent::bake($controllerName,$actions,$helpers,$components);
 		$this->bakeTest($controllerName,$actions,$helpers,$components);
 	}
@@ -60,6 +62,7 @@ class TddControllerTask extends ControllerTask {
 		$this->TddControllerTest->plugin = $this->plugin;
 		$this->TddControllerTest->connection = $this->connection;
 		$this->TddControllerTest->interactive = $this->interactive;
+		$this->TddControllerTest->package = $this->package;
 		return $this->TddControllerTest->bake('Controller', $className,$actions,$helpers,$components);
 	}
 

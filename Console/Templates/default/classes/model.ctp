@@ -34,6 +34,8 @@ foreach (array('hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany') as $asso
 	}
 }
 ?>
+ *
+ * @package <?php echo $package .PHP_EOL?>
  */
 class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
 <?php if ($useDbConfig != 'default'): ?>
@@ -59,7 +61,7 @@ if ($primaryKey !== 'id'): ?>
 <?php endif;
 if ($displayField): ?>
 	/**
-	 * Display field
+	 * Display field for this model
 	 *
 	 * @var string
 	 */
@@ -90,7 +92,6 @@ foreach ($associations as $assoc):
 	if (!empty($assoc)):
 ?>
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
 <?php
 		break;
 	endif;

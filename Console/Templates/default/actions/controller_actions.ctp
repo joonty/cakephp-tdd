@@ -19,7 +19,7 @@
 ?>
 
 	/**
-	 * <?php echo $admin ?>index method
+	 * Paginated list of <?php echo $pluralName?>.
 	 *
 	 * @return void
 	 */
@@ -29,7 +29,11 @@
 	}
 
 	/**
-	 * <?php echo $admin ?>view method
+	 * View a single <?php echo $singularHumanName?> for a given ID.
+	 *
+	 * Throws an exception if the ID is invalid.
+	 *
+	 * @throws NotFoundException
 	 *
 	 * @param string $id
 	 * @return void
@@ -44,7 +48,12 @@
 
 <?php $compact = array(); ?>
 	/**
-	 * <?php echo $admin ?>add method
+	 * Add form and action for <?php echo $singularHumanName?>.
+	 *
+	 * The form is shown if the request method is GET, and data is saved to the
+	 * database if the request method is POST.
+	 *
+	 * Redirects to the index action on successful save.
 	 *
 	 * @return void
 	 */
@@ -83,7 +92,15 @@
 
 <?php $compact = array(); ?>
 	/**
-	 * <?php echo $admin ?>edit method
+	 * Edit form and action for <?php echo $singularHumanName?>, for a given ID.
+	 *
+	 * A form is shown with populated data if the request method is GET, and
+	 * the data is updated in the database if the request method is POST.
+	 *
+	 * Redirects to the index action on successful update, and throws an exception
+	 * if the ID is invalid.
+	 *
+	 * @throws NotFoundException
 	 *
 	 * @param string $id
 	 * @return void
@@ -127,7 +144,14 @@
 	}
 
 	/**
-	 * <?php echo $admin ?>delete method
+	 * Delete a <?php echo strtolower($singularHumanName)?> record for a given ID.
+	 *
+	 * The method has to be POST, or a MethodNotAllowedException is thrown. A
+	 * NotFoundException is thrown for an invalid ID. On successful deletion,
+	 * the user is redirected to the index action.
+	 *
+	 * @throws MethodNotAllowedException
+	 * @throws NotFoundException
 	 *
 	 * @param string $id
 	 * @return void

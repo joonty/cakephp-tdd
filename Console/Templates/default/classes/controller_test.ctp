@@ -22,7 +22,6 @@ echo "<?php\n";
 /**
  * Contains a test case for <?php echo $fullClassName?>.
  *
- * @subpackage Tests
  * @copyright Copyright (c) 22 Blue 2012
  */
 App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
@@ -30,6 +29,8 @@ App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 /**
  * <?php echo $fullClassName; ?> Test Case
  *
+ * @package <?php echo $package.PHP_EOL ?>
+ * @subpackage Tests
  */
 class <?php echo $fullClassName; ?>TestCase extends TddControllerTestCase {
 <?php if (!empty($fixtures)): ?>
@@ -42,16 +43,21 @@ class <?php echo $fullClassName; ?>TestCase extends TddControllerTestCase {
 
 <?php endif; ?>
 
+	/**
+	 * The current number of deleted data sets.
+	 *
+	 * @var integer
+	 */
 	protected static $deleteIncr = 0;
 
-	/***************
+	/*
 	*
 	* Set up / Tear down
 	*
-	***************/
+	*/
 
 	/**
-	 * setUp method
+	 * Create the mock controller to be used by all tests.
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -107,7 +113,7 @@ EOD;
 	}
 
 	/**
-	 * tearDown method
+	 * Unset the mock controller and call the parent tearDown method.
 	 */
 	public function tearDown() {
 		unset($this-><?php echo $className;?>);
@@ -115,14 +121,16 @@ EOD;
 		parent::tearDown();
 	}
 
-        /***************
-        *
-        * Data providers
-        *
-        ***************/
+	/*
+	*
+	* Data providers
+	*
+	*/
 
 	/**
 	 * Return a couple of IDs that are entered by the fixture.
+	 *
+	 * @return array
 	 */
 	public function provideIds() {
 		return array(
@@ -133,6 +141,8 @@ EOD;
 
 	/**
 	 * Return a new ID for testing a delete, each time this provider is called.
+	 *
+	 * @return array
 	 */
 	public function provideDeleteIds() {
 		self::$deleteIncr++;
@@ -143,6 +153,8 @@ EOD;
 
 	/**
 	 * Return some examples of invalid IDs.
+	 *
+	 * @return array
 	 */
 	public function provideInvalidIds() {
 		return array(
@@ -156,6 +168,8 @@ EOD;
 	 * Return some invalid model data.
 	 *
 	 * @todo You should add some more entries with different data as you supply validation rules on the model. This currently assumes your ids are numeric only.
+	 *
+	 * @return array
 	 */
 	public function provideInvalidData() {
 		return array(
@@ -166,11 +180,11 @@ EOD;
 		);
 	}
 
-        /***************
-        *
-        * Test cases
-        *
-        ***************/
+	/*
+	*
+	* Test cases
+	*
+	*/
 
 <?php foreach ($methods as $method): ?>
 <?php switch ($method['type']):?>
@@ -183,6 +197,8 @@ EOD;
 	 *
 	 * @dataProvider provideInvalidIds
 	 * @expectedException NotFoundException
+	 *
+	 * @param integer $id Invalid ID
 	 */
 	public function test<?php echo $method['name']?>ThrowsExceptionWithInvalidId($id) {
 		$retval = $this->testAction(
@@ -197,6 +213,8 @@ EOD;
 	 * Test that the add method fails with an invalid data set.
 	 *
 	 * @dataProvider provideInvalidData
+	 *
+	 * @param array $data Invalid data set
 	 */
 	public function test<?php echo $method['name']?>FailsWithInvalidData($data) {
 		$this->testAction(
@@ -214,7 +232,6 @@ EOD;
 	 * The values are then checked against eachother.
 	 */
 	public function test<?php echo $method['name']?>SavesData() {
-		//You might want to create your own data, rather than using newFixureRecord()
 		$postData = array('<?php echo $primaryModel?>'=>$this->newFixtureRecord('<?php echo strtolower($primaryModel)?>'));
 		$this->testAction(
 			'<?php echo $method['action']?>',
@@ -230,7 +247,7 @@ EOD;
 
 		$this->assertInternalType('array',$dbData);
 		foreach ($postData['<?php echo $primaryModel?>'] as $key=>$value) {
-			$this->assertEqual($value,$dbData['<?php echo $primaryModel?>'][$key]);
+			$this->assertEquals($value,$dbData['<?php echo $primaryModel?>'][$key],"Unexpected value for key '$key'");
 		}
 	}
 <?php break;
@@ -241,6 +258,8 @@ EOD;
 	 *
 	 * @dataProvider provideInvalidIds
 	 * @expectedException NotFoundException
+	 *
+	 * @param integer $id Invalid ID
 	 */
 	public function test<?php echo $method['name']?>ThrowsExceptionWithInvalidId($id) {
 		$retval = $this->testAction(
@@ -294,6 +313,8 @@ EOD;
 	 * Check that data is read from the database when GET method is used.
 	 *
 	 * @dataProvider provideIds
+	 *
+	 * @param integer $id Valid ID
 	 */
 	public function test<?php echo $method['name'] ?>WithGetMethodDoesARead($id) {
 		$this->testAction(
@@ -328,6 +349,8 @@ EOD;
 	 *
 	 * @dataProvider provideInvalidIds
 	 * @expectedException NotFoundException
+	 *
+	 * @param integer $id Invalid ID
 	 */
 	public function test<?php echo $method['name']?>ThrowsExceptionWithInvalidId($id) {
 		$retval = $this->testAction(
@@ -343,6 +366,8 @@ EOD;
 	 * Test that the delete method removes the data from the database.
 	 *
 	 * @dataProvider provideDeleteIds
+	 *
+	 * @param integer $id Valid ID
 	 */
 	public function test<?php echo $method['name']?>RemovesData($id) {
 		$this->testAction(

@@ -22,7 +22,6 @@ echo "<?php\n";
 /**
  * Contains a test case for <?php echo $fullClassName?>.
  *
- * @subpackage Tests
  * @copyright Copyright (c) 22 Blue 2012
  */
 App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
@@ -30,6 +29,8 @@ App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 /**
  * <?php echo $fullClassName; ?> Test Case
  *
+ * @package <?php echo $package.PHP_EOL ?>
+ * @subpackage Tests
  */
 class <?php echo $fullClassName; ?>VarsTestCase extends TddControllerTestCase {
 <?php if (!empty($fixtures)): ?>
@@ -40,9 +41,15 @@ class <?php echo $fullClassName; ?>VarsTestCase extends TddControllerTestCase {
 	 */
 	public $fixtures = array('<?php echo join("', '", $fixtures); ?>');
 
+	/*
+	*
+	* Set up / Tear down
+	*
+	*/
+
 <?php endif; ?>
 	/**
-	 * setUp method
+	 * Create the mock controller to be used by all tests.
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -98,13 +105,19 @@ EOD;
 	}
 
 	/**
-	 * tearDown method
+	 * Unset the mock controller and call the parent tearDown method.
 	 */
 	public function tearDown() {
 		unset($this-><?php echo $className;?>);
 
 		parent::tearDown();
 	}
+
+	/*
+	*
+	* Test cases
+	*
+	*/
 
 <?php foreach ($methods as $method): ?>
 <?php switch ($method['type']):?>
