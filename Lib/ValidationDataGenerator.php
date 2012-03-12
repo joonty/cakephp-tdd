@@ -41,12 +41,42 @@ class ValidationDataGenerator {
 		}
 	}
 	
+	/**
+	 * Get constraints on the string length as defined by the maxlength and minlength rules.
+	 * @param ValidationField $field
+	 * @return array Array with two values, minimum and maximum length
+	 */
+	protected function getLengthConstraints(ValidationField $field) {
+		$maxLength = $field->getMaxLengthRule();
+		$minLength = $field->getMinLengthRule();
+		$ret = array(0,0);
+		if ($minLength) {
+			$ret[0] = $minLength->param();
+		}
+		if ($maxLength) {
+			$ret[1] = $maxLength->param();
+		}
+		return $ret;
+	}
+	
+	protected function fixStringLength($string, array $constraints) {
+		while (strlen($string) < $constraints[0]) {
+			$string .= " ".$string;
+		}
+		if ($constraints[1] > 0 && strlen($string) > $constraints[1]) {
+			$string = substr($string,0,$constraints[1]);
+		}
+		return $string;
+	}
+	
 	protected function createBlank(ValidationRule $rule) {
 		return '';
 	}
 	
 	protected function createDefault(ValidationRule $rule) {
-		return join(' ',$this->lipsumWords(5));
+		$string = join(' ',$this->lipsumWords(5));
+		$lengths = $this->getLengthConstraints($rule->getField());
+		return $this->fixStringLength($string, $lengths);
 	}
 
 	protected function createNumeric(ValidationRule $rule) {
@@ -68,7 +98,9 @@ class ValidationDataGenerator {
 			$rule->getField()->addWarning("Lower value cannot be higher than the upper value for rule 'between'");
 			$lower = $upper;
 		}
-		return rand($lower,$upper);
+		
+		$string = join(' ',$this->lipsumWords(5));
+		return $this->fixStringLength($string,array($lower, $upper));
 	}
 
 	protected function createRange(ValidationRule $rule) {
@@ -85,25 +117,6 @@ class ValidationDataGenerator {
 			$lower = $upper;
 		}
 		return rand($lower+1,$upper-1);
-	}
-
-	protected function _maxLength($rule) {
-		if (!$this->ensureArray('maxLength', $rule, 2)) {
-			return false;
-		}
-		return $this->lipsum($rule[1]);
-	}
-
-	protected function _minLength($rule) {
-		if (!$this->ensureArray('minLength', $rule, 2)) {
-			return false;
-		}
-
-		$string = $this->lipsum($rule[1]);
-		while (strlen($string) < $rule[1]) {
-			$string .= ' ' . $string;
-		}
-		return $string;
 	}
 
 	protected function createIp(ValidationRule $rule) {
@@ -177,7 +190,13 @@ class ValidationDataGenerator {
 	protected function createAlphanumeric(ValidationRule $rule) {
 		$characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
 		$string = '';
-		for ($i = 0; $i < 10; $i++) {
+		$maxLength = $rule->getField()->getMaxLengthRule();
+		if ($maxLength) {
+			$max = $maxLength->param();
+		} else {
+			$max = 10;
+		}
+		for ($i = 0; $i < $max; $i++) {
 			$string .= $characters[rand(0, strlen($characters) - 1)];
 		}
 		return $string;

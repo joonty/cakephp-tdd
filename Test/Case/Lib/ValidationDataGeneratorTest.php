@@ -36,8 +36,8 @@ class ValidationDataGeneratorTestCase extends CakeTestCase {
 	
 	public function testGetDataWithBetween() {
 		$data = $this->sut->dispatch($this->getRule('between',array(5,10)));
-		$this->assertGreaterThanOrEqual(5,$data,"Data must be >= 5");
-		$this->assertLessThanOrEqual(10,$data,"Data must be <= 10");
+		$this->assertGreaterThanOrEqual(5,strlen($data),"String length must be >= 5");
+		$this->assertLessThanOrEqual(10,strlen($data),"String length must be <= 10");
 	}
 	
 	public function testGetDataWithRange() {

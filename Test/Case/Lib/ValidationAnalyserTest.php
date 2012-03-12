@@ -1,11 +1,14 @@
 <?php
 
 App::uses('ValidationAnalyser','Tdd.Lib');
+App::uses('ValidationField','Tdd.Lib');
 App::uses('Model','Model');
 
 class Examplemodel extends Model {
 	public $validate = array(
-		'id'=>'numeric'
+		'id'=>'numeric',
+		'afield'=>array('rule'=>array('between',10,20)),
+		'email'=>'email'
 	);
 }
 
@@ -25,9 +28,25 @@ class ValidationAnalyserTestCase extends CakeTestCase {
 		$this->assertTrue($this->sut->hasRules());
 	}
 	
-	public function testValidFieldIsNumeric() {
+	public function testIdFieldIsNumeric() {
 		$ret = $this->sut->validField('id');
 		$this->assertTrue(is_numeric($ret),"Return value for 'id' should be numeric");
+	}
+	
+	public function testAFieldFieldIsNumeric() {
+		$ret = $this->sut->validField('afield');
+		$this->assertGreaterThanOrEqual(10, strlen($ret));
+		$this->assertLessThanOrEqual(20, strlen($ret));
+	}
+	
+	public function testValidDataContainsAllKeys() {
+		$data = $this->sut->validData();
+		debug($data);
+		$this->assertInternalType('array',$data);
+		$this->assertArrayHasKey('id', $data);
+		$this->assertArrayHasKey('afield', $data);
+		$this->assertArrayHasKey('email', $data);
+
 	}
 }
 ?>

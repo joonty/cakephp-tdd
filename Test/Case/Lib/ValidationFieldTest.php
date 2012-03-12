@@ -28,7 +28,7 @@ class ValidationFieldTestCase extends CakeTestCase {
 					'rule'=>'email'
 				),
 				'secondrule'=>array(
-					'rule'=>array('minLength',5)
+					'rule'=>'[a-z0-9]+'
 				)
 			)
 		));
@@ -65,8 +65,7 @@ class ValidationFieldTestCase extends CakeTestCase {
 		$rules = $vf->rules();
 		$rule2 = $rules[1];
 		$this->assertInstanceOf('ValidationRule',$rule2);
-		$this->assertEquals('minLength',$rule2->getName());
-		$this->assertEquals(array(5),$rule2->getParameters());
+		$this->assertEquals('[a-z0-9]+',$rule2->getName());
 	}
 	
 	public function testDuplicateRulesAreIgnored() {
@@ -87,6 +86,9 @@ class ValidationFieldTestCase extends CakeTestCase {
 	public function provideIncompatibleRuleTypes() {
 		return array(
 			array(array(array('rule'=>'numeric'),array('rule'=>'email'))),
+			array(array(array('rule'=>'range'),array('rule'=>'url'))),
+			array(array(array('rule'=>'ip'),array('rule'=>'decimal'))),
+
 		);
 	}
 	
@@ -97,7 +99,47 @@ class ValidationFieldTestCase extends CakeTestCase {
 		$vf = new ValidationField('myfield',$rules);
 		$warnings = $vf->getWarnings();
 		$this->assertCount(1,$warnings);
+		$this->assertStringStartsWith("Ignoring validation rule", $warnings[0]);
+	}
+	
+	public function testExclusiveRuleTypesAddWarningWithOtherRules() {
+		$vf = new ValidationField('myfield',array(array('rule'=>array('equalTo',1)),array('rule'=>'url')));
+		$warnings = $vf->getWarnings();
+		$this->assertCount(1,$warnings);
+		$this->assertStringStartsWith("A rule type exists", $warnings[0]);
+	}
+	
+	public function testInvalidMaxLengthRuleAddsWarning() {
+		$vf = new ValidationField('myfield',array('rule'=>array('maxLength')));
+		$warnings = $vf->getWarnings();
+		$this->assertCount(1,$warnings);
+		$this->assertStringStartsWith("Missing parameter for max", $warnings[0]);
+	}
+	
+	public function testInvalidMinLengthRuleAddsWarning() {
+		$vf = new ValidationField('myfield',array('rule'=>array('minLength')));
+		$warnings = $vf->getWarnings();
+		$this->assertCount(1,$warnings);
+		$this->assertStringStartsWith("Missing parameter for min", $warnings[0]);
+	}
+	
+	public function testInvalidMaxAndMinLengthRuleCombinationAddsWarning() {
+		$vf = new ValidationField('myfield',array(array('rule'=>array('maxLength',10)),array('rule'=>array('minLength',20))));
+		$warnings = $vf->getWarnings();
+		$this->assertCount(1,$warnings);
+		$this->assertStringStartsWith("Min length", $warnings[0]);
+	}
+	
+	public function testGetDataWithMaxLength() {
+		$vf = new ValidationField('myfield',array('rule'=>array('maxLength',20)));
+		$data = $vf->getData();
+		$this->assertLessThanOrEqual(20,strlen($data),"String should be less than 20 characters");
+	}
+	
+	public function testGetDataWithMinLength() {
+		$vf = new ValidationField('myfield',array('rule'=>array('minLength',100)));
+		$data = $vf->getData();
+		$this->assertGreaterThanOrEqual(100,strlen($data),"String should be less than 100 characters");
 	}
 }
-
 ?>

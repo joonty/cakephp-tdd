@@ -1,4 +1,5 @@
 <?php
+App::uses('ValidationField','Tdd.Lib');
 
 class InvalidValidateRulesetException extends Exception {
 	public function __construct($modelName,$key=null) {
@@ -9,6 +10,14 @@ class InvalidValidateRulesetException extends Exception {
 		parent::__construct($message);
 	}
 }
+
+class InvalidFieldNameException extends Exception {
+	public function __construct($modelName,$key) {
+		$message = "No key (or no validation on key) \"$key\" for model \"$modelName\"";
+		parent::__construct($message);
+	}
+}
+
 
 /**
  * @author Jon Cairns <jon@joncairns.com> 
@@ -34,7 +43,21 @@ class ValidationAnalyser {
 		$this->parseRules();
 	}
 	
-	public function getWarnings() {
+	/**
+	 * Get all validation warnings as a formatted string.
+	 * 
+	 * @return string 
+	 */
+	public function getWarningsAsString() {
+		$warningString = "The following warnings occurred when parsing the validation rules on the ".$this->model->name." model:".PHP_EOL.PHP_EOL;
+		foreach ($this->fields as $fieldName=>$field) {
+			$warnings = $field->getWarnings();
+			if (count($warnings)) { 
+				$warningString .= "Field '$fieldName'";
+				$warningString .= PHP_EOL."\t- ".implode(PHP_EOL."\t- ",$warnings).PHP_EOL.PHP_EOL;
+			}
+		}
+		return $warningString;
 	}
 	
 	/**
@@ -65,15 +88,35 @@ class ValidationAnalyser {
 	
 	/**
 	 * Get an example value that fits the validation rule set for a given field.
+	 * 
+	 * @throws InvalidFieldNameException
+	 * 
 	 * @param string $field 
+	 * @return mixed Example datas
 	 */
 	public function validField($field) {
-		print_r($this->rules);
+		if (!array_key_exists($field,$this->fields)) {
+			throw new InvalidFieldNameException($this->model->name,$field);
+		}
+		$validationField = $this->fields[$field];
+		return $validationField->getData();
+	}
+	
+	public function validData() {
+		$ret = array();
+		foreach ($this->fields as $fieldName=>$field) {
+			$ret[$fieldName] = $field->getData();
+		}
+		return $ret;
 	}
 	
 	/**
 	 * Get an example value that doesn't pass the validation rule set for a field.
+	 * 
+	 * @throws InvalidFieldNameException
+	 * 
 	 * @param string $field 
+	 * @return mixed Example datas
 	 */
 	public function invalidField($field) {
 		
