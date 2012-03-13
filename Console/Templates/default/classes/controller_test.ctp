@@ -245,6 +245,7 @@ EOD;
 	 * @expectedException NotFoundException
 	 *
 	 * @param integer $id Invalid ID
+	 * @return void
 	 */
 	public function test<?php echo $method['name']?>ThrowsExceptionWithInvalidId($id) {
 		$retval = $this->testAction(
@@ -261,6 +262,7 @@ EOD;
 	 * @dataProvider provideInvalidData
 	 *
 	 * @param array $data Invalid data set
+	 * @return void
 	 */
 	public function test<?php echo $method['name']?>FailsWithInvalidData($data) {
 		$this->testAction(
@@ -276,23 +278,25 @@ EOD;
 	 *
 	 * A new data set is automatically generated, and then retrieved from the database.
 	 * The values are then checked against eachother.
+	 *
+	 * @dataProvider provideValidData
+	 *
+	 * @param array $data
+	 * @return void
 	 */
-	public function test<?php echo $method['name']?>SavesData() {
-		$postData = array('<?php echo $primaryModel?>'=>$this->newFixtureRecord('<?php echo strtolower($primaryModel)?>'));
+	public function test<?php echo $method['name']?>SavesData($data) {
 		$this->testAction(
 			'<?php echo $method['action']?>',
-			array('data'=>$postData)
+			array('data'=>$data)
 		);
 
-		$conditions = array();
-		foreach ($postData['<?php echo $primaryModel?>'] as $n=>$v) {
-			$conditions['<?php echo $primaryModel?>.'.$n] = $v;
-		}
-
-		$dbData = $this->controller-><?php echo $primaryModel?>->find('first',array('conditions'=>$conditions));
+		$dbData = $this->controller-><?php echo $primaryModel?>->findById($data['<?php echo $primaryModel?>']['id']);
 
 		$this->assertInternalType('array',$dbData);
-		foreach ($postData['<?php echo $primaryModel?>'] as $key=>$value) {
+		foreach ($data['<?php echo $primaryModel?>'] as $key=>$value) {
+			if ($key == 'modified' || $key == 'created') {
+				continue;
+			}
 			$this->assertEquals($value,$dbData['<?php echo $primaryModel?>'][$key],"Unexpected value for key '$key'");
 		}
 	}
@@ -306,6 +310,7 @@ EOD;
 	 * @expectedException NotFoundException
 	 *
 	 * @param integer $id Invalid ID
+	 * @return void
 	 */
 	public function test<?php echo $method['name']?>ThrowsExceptionWithInvalidId($id) {
 		$this->testAction(
@@ -320,12 +325,16 @@ EOD;
 	 * A session flash message is stored, which should say that the data couldn't
 	 * be saved.
 	 *
-	 * @todo Pass data that will fail the model's validation criteria to test this method
+	 * @dataProvider provideInvalidData
+	 *
+	 * @param array $data
+	 * @return void
 	 */
-	public function test<?php echo $method['name']?>FailsWithInvalidData() {
-		$this->markTestIncomplete("Pass some invalid data to this test");
+	public function test<?php echo $method['name']?>FailsWithInvalidData($data) {
+		$id = 1;
+		$data['<?php echo $primaryModel?>']['id'] = $id;
 		$this->testAction(
-			'<?php echo $method['action']?>',
+			'<?php echo $method['action']?>/'.$id,
 			array('data'=>$data)
 		);
 		$flash = $this->controller->Session->read('Message.flash.message');
@@ -334,23 +343,31 @@ EOD;
 
 	/**
 	 * Check that a valid data set is updated in the database.
+	 *
+	 * @dataProvider provideValidData
+	 *
+	 * @param array $data
+	 * @return void
 	 */
-	public function test<?php echo $method['name'] ?>ModifiesData() {
+	public function test<?php echo $method['name'] ?>ModifiesData($data) {
 		$id = 1;
-
-		// You may want to put your own data manipulation in here.
-		$postData = array('<?php echo $primaryModel?>'=>$this->newFixtureRecord('<?php echo strtolower($primaryModel)?>'));
-		$postData['<?php echo $primaryModel?>']['id'] = $id;
+		$data['<?php echo $primaryModel?>']['id'] = $id;
 
 		$this->testAction(
 			'<?php echo $method['action']?>/'.$id,
-			array('data'=>$postData)
+			array('data'=>$data)
 		);
+
+		$flash = $this->controller->Session->read('Message.flash.message');
+		$this->assertNotContains("could not be saved", $flash);
 
 		$dbData = $this->controller-><?php echo $primaryModel?>->findById($id);
 
 		$this->assertInternalType('array',$dbData);
-		foreach ($postData['<?php echo $primaryModel?>'] as $key=>$value) {
+		foreach ($data['<?php echo $primaryModel?>'] as $key=>$value) {
+			if ($key == 'modified' || $key == 'created') {
+				continue;
+			}
 			$this->assertEqual($value,$dbData['<?php echo $primaryModel?>'][$key]);
 		}
 	}
@@ -361,6 +378,7 @@ EOD;
 	 * @dataProvider provideIds
 	 *
 	 * @param integer $id Valid ID
+	 * @return void
 	 */
 	public function test<?php echo $method['name'] ?>WithGetMethodDoesARead($id) {
 		$this->testAction(
@@ -379,6 +397,8 @@ EOD;
 	 * Check that an exception is thrown with an invalid HTTP method.
 	 *
 	 * @expectedException MethodNotAllowedException
+	 *
+	 * @return void
 	 */
 	public function test<?php echo $method['name']?>ThrowsExceptionWithInvalidMethod() {
 		$retval = $this->testAction(
@@ -397,6 +417,7 @@ EOD;
 	 * @expectedException NotFoundException
 	 *
 	 * @param integer $id Invalid ID
+	 * @return void
 	 */
 	public function test<?php echo $method['name']?>ThrowsExceptionWithInvalidId($id) {
 		$retval = $this->testAction(
@@ -414,6 +435,7 @@ EOD;
 	 * @dataProvider provideDeleteIds
 	 *
 	 * @param integer $id Valid ID
+	 * @return void
 	 */
 	public function test<?php echo $method['name']?>RemovesData($id) {
 		$this->testAction(
