@@ -5,7 +5,7 @@ class TddFixtureTask extends FixtureTask {
 
 	public function bake($model, $useTable = false, $importOptions = array()) {
 		$this->Template->set('package',$this->package);
-		parent::bake($type, $useTable, $importOptions);
+		parent::bake($model, $useTable, $importOptions);
 	}
 
 }

@@ -30,6 +30,12 @@ class TddControllerTestTask extends TestTask {
 			$models = array($primaryModel);
 		}
 		$primaryModel = $testSubject->modelClass;
+		try {
+			$validation = new ValidationAnalyser(new $primaryModel);
+		} catch (Exception $e) {
+			debug($e);
+			$validation = null;
+		}
 
 		App::uses($fullClassName, 'app.'.$realType);
 
@@ -41,6 +47,7 @@ class TddControllerTestTask extends TestTask {
 
 		$this->out("\n" . __d('cake_console', 'Baking test case for %s %s ...', $className, $type), 1, Shell::QUIET);
 
+		$this->Template->set('validation',$validation);
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
 		$this->Template->set('package',$this->package);

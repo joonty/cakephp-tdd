@@ -172,19 +172,21 @@ class ValidationField {
 		foreach ($rules as $rule) {
 			$data = $generator->dispatch($rule);
 		}
-		if (isset($this->maxLength)) {
-			$maxLen = $this->maxLength->param();
-			while (strlen($data) < $maxLen) {
-				$data .= " ".$data;
+		if ($possibleFail) {
+			if (isset($this->maxLength)) {
+				$maxLen = $this->maxLength->param();
+				while (strlen($data) < $maxLen) {
+					$data .= " ".$data;
+				}
+				$possibleFail = false;
+			} else if (isset($this->minLength)) {
+				$minLen = $this->minLength->param();
+				if ($minLen == 0) {
+					$minLen = 1;
+				}
+				$data = substr($data,0,$minLen-1);
+				$possibleFail = false;
 			}
-			$possibleFail = false;
-		} else if (isset($this->minLength)) {
-			$minLen = $this->minLength->param();
-			if ($minLen == 0) {
-				$minLen = 1;
-			}
-			$data = substr($data,0,$minLen-1);
-			$possibleFail = false;
 		}
 		if ($possibleFail) {
 			$this->addWarning("The attempt to create invalid data may have been unsuccessful - please review the created data");

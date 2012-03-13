@@ -164,6 +164,34 @@ EOD;
 		);
 	}
 
+	<?php if ($validation):?>
+
+	/**
+	 * Return a set of data that will pass the model's validation rules.
+	 *
+	 * @return array
+	 */
+	public function provideValidData() {
+		return array(
+			array(array('<?php echo $primaryModel?>' => <?php var_export($validation->validData());?>)),
+			array(array('<?php echo $primaryModel?>' => <?php var_export($validation->validData());?>))
+		);
+	}
+
+	/**
+	 * Return a set of data that will fail the model's validation rules.
+	 *
+	 * @return array
+	 */
+	public function provideInvalidData() {
+		return array(
+			array(array('<?php echo $primaryModel?>' => <?php var_export($validation->invalidData());?>)),
+			array(array('<?php echo $primaryModel?>' => <?php var_export($validation->invalidData());?>))
+		);
+	}
+
+	<?php else:?>
+
 	/**
 	 * Return some invalid model data.
 	 *
@@ -179,6 +207,24 @@ EOD;
 			))
 		);
 	}
+
+	/**
+	 * Return some valid model data.
+	 *
+	 * @todo You should add some more entries with different data as you supply validation rules on the model.
+	 *
+	 * @return array
+	 */
+	public function provideValidData() {
+		return array(
+			array(array('<?php echo $primaryModel?>' => array(
+					'id' => 1
+				)
+			))
+		);
+	}
+
+	<?php endif;?>
 
 	/*
 	*

@@ -35,6 +35,9 @@ class TddModelTask extends ModelTask {
 	public function bake($name,$data = array()) {
 		$this->Template->set('package',$this->package);
 		parent::bake($name,$data);
+		strtoupper($this->in(__d('cake_console',
+		'Take a moment to check the validation rules on your model. These are used to automatically add test data, to help your tests pass first time! Press "y" to continue.'),
+		array('y')));
 		$this->bakeTest($name);
 		$this->bakeFixture($name,null,$data);
 	}

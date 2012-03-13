@@ -13,10 +13,12 @@ class ValidationRule {
 
 	const TYPE_STRING = 'string';
 	const TYPE_NUMBER = 'number';
+	const TYPE_NUMBER_NOPARAMS = 'number_noparams';
 	const TYPE_EXCLUSIVE = 'exclusive';
 
 	protected static $ruletypes = array(
 		'string'=>array(
+			'alphanumeric',
 			'email',
 			'url',
 			'default',
@@ -31,9 +33,14 @@ class ValidationRule {
 			'range',
 			'between'
 		),
+		'number_noparams'=>array(
+			'decimal',
+			'numeric'
+		),
 		'exclusive'=>array(
 			'blank',
-			'equalto'
+			'equalto',
+			'boolean'
 		)
 	);
 
@@ -131,13 +138,13 @@ class ValidationRule {
 	public function getConflictingRule() {
 		switch ($this->type) {
 			case self::TYPE_STRING:
-				$rules = self::$ruletypes[self::TYPE_NUMBER];
+				$rules = self::$ruletypes[self::TYPE_NUMBER_NOPARAMS];
 				break;
 			case self::TYPE_NUMBER:
 				$rules = self::$ruletypes[self::TYPE_STRING];
 				break;
 			case self::TYPE_EXCLUSIVE:
-				$rules = self::$ruletypes[self::TYPE_NUMBER];
+				$rules = self::$ruletypes[self::TYPE_NUMBER_NOPARAMS];
 				break;
 			default:
 				return null;

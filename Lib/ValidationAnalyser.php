@@ -49,7 +49,7 @@ class ValidationAnalyser {
 	 * @return string
 	 */
 	public function getWarningsAsString() {
-		$warningString = "The following warnings occurred when parsing the validation rules on the ".$this->model->name." model:".PHP_EOL.PHP_EOL;
+		$warningString = '';
 		foreach ($this->fields as $fieldName=>$field) {
 			$warnings = $field->getWarnings();
 			if (count($warnings)) {
@@ -57,7 +57,11 @@ class ValidationAnalyser {
 				$warningString .= PHP_EOL."\t- ".implode(PHP_EOL."\t- ",$warnings).PHP_EOL.PHP_EOL;
 			}
 		}
-		return $warningString;
+		if (strlen($warningString)) {
+			return "The following warnings occurred when parsing the validation rules on the ".$this->model->name." model:".PHP_EOL.PHP_EOL.$warningString;
+		} else {
+			return null;
+		}
 	}
 
 	/**
