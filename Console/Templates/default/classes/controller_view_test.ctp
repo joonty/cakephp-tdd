@@ -129,17 +129,17 @@ EOD;
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 
-		$ret = $this->testAction(
+		$html = $this->testAction(
 			'<?php echo $method['action']?>',
 			array('return' => 'view')
 		);
 
-		$html = new DOMDocument();
-		$html->loadHTML($ret);
+		$doc = new DOMDocument();
+		$doc->loadHTML($html);
 
-		$this->assertSelectCount('.<?php echo strtolower($className)?> table tr', 11, $html);
+		$this->assertSelectCount('.<?php echo strtolower($className)?> table tr', 11, $doc);
 
-		return $html;
+		return $doc;
 	}
 <?php break;
 	case 'edit':
@@ -161,7 +161,7 @@ EOD;
 		$doc = new DOMDocument();
 		$doc->loadHTML($html);
 
-		return $html;
+		return $doc;
 	}
 
 <?php break;
@@ -183,7 +183,7 @@ EOD;
 		$doc = new DOMDocument();
 		$doc->loadHTML($html);
 
-		return $html;
+		return $doc;
 	}
 <?php break;
 	case 'delete':?>
@@ -202,7 +202,7 @@ EOD;
 		$doc = new DOMDocument();
 		$doc->loadHTML($html);
 
-		return $html;
+		return $doc;
 	}
 <?php endswitch;?>
 <?php endforeach;?>

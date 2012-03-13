@@ -61,6 +61,9 @@ class TddTestHelper {
 				case 'modified':
 				case 'created':
 					break;
+				case 'email':
+					$ret[$n]=$v;
+					break;
 				default:
 					if (is_numeric($v)) {
 						if ($v == 1) {
