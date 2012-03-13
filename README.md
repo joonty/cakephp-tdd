@@ -2,7 +2,12 @@
 
 ## Helpful tools for test driven development with the CakePHP framework
 
-100% code coverage is the aim of test driven development, but it can be hard and laborious to achieve when baking code through CakePHP. This plugin, along with providing some helpful testing tools, attempts to bake fully working tests that will give full coverage of baked model and controller code from the very beginning of the project.
+100% code coverage is the aim of test driven development, but it can be hard and
+laborious to achieve after baking code through CakePHP, as straight away
+you have a lot of untested code.
+
+This plugin, along with providing some helpful testing tools, bakes fully working tests
+that will give complete coverage of baked model and controller code from the outset of a project.
 
 This allows for immediate refactoring and modification of baked code, with the assurance that TDD gives you in noticing knock on effects.
 
@@ -14,7 +19,9 @@ This plugin features:
 
 - An extension of the core bake shell, that generates complete test cases
 - A new test case class, to use instead of `CakeTestCase` where required
-- A few mock classes for isolating test cases
+- Validation rules on the model are analysed, to produce dummy data that will pass these rules (for use in tests)
+- A few mock classes for isolating test cases from each other
+- A mock class includer, that also allows mock objects to be used as controller components
 - A helpful command line executable to make CLI testing easier (Unix only)
 
 ## How does it work?
@@ -25,13 +32,17 @@ Instead of using the core bake shell, use the `Tdd.bake` shell that extends it:
 Console/cake Tdd.bake
 ```
 
-Everything from here should be familiar, but instead of the options to bake tests and fixtures, these are generated automatically when baking models and controllers. Furthermore with controllers, admin routing is also tested, and the Auth and Session components are mocked.
-
-
+Everything from here should be familiar, but instead of the options to bake tests and fixtures,
+these are generated automatically when baking models and controllers. Furthermore with controllers, admin
+routing is also tested, and the Auth and Session components are mocked.
 
 ## Testing tools
 
-When creating test cases, extend the new `TddTestCase` class, which itself extends the `CakeTestClass`. This class does some useful things to isolate tests from each other (such as making cache configurations temporary), and it provides a couple of useful methods to access fixtures and fixture data. For example:
+When creating test cases, extend the new `TddTestCase` class (or `TddControllerTestCase`
+for testing controllers), which itself extends the `CakeTestClass`.
+This class does some things to isolate tests from each other
+(such as making cache configurations temporary), and it provides
+a couple of useful methods to access fixtures and fixture data. For example:
 
 ```php
 
@@ -45,7 +56,7 @@ class UserTestCase extends TddTestCase {
 		$data = $this->fixtureData('user');
 
 		//This is the $records array in the fixture class
-		
+
 		foreach ($data as $record) {
 			//Do something
 		}
@@ -87,7 +98,7 @@ class UserFixture extends Fixture {
 ```
 
 Now lets say we want to test a `getByEmail()` method on the User model. We could hard-code "john@example.com" as our test email subject, expecting to get this fixture record back.
-But what if another developer needs to change the fixture record for their own purposes? The test is now broken. 
+But what if another developer needs to change the fixture record for their own purposes? The test is now broken.
 It's better to remove duplication by retrieving what's already in the fixture, and using that to fetch the email, like so:
 
 ```
@@ -98,9 +109,9 @@ public function testGetByEmail() {
 
 	//Even if the email is changed, it doesn't matter
 	$result = $this->User->getByEmail($data['email']);
-	
+
 	$this->assertInternalType('array',$result);
-	$this->assertEqual($result['User']['email'],$data['email']);	
+	$this->assertEqual($result['User']['email'],$data['email']);
 }
 ```
 
@@ -109,7 +120,7 @@ The `newFixtureRecord()` method picks a random fixture record and manipulates th
 ## Command line tools
 
 Anyone who has used a CakePHP application from a Unix command line will probably have come across permissions problems with the temporary directory. This is because the web server is running as a different user to you, and temporary files are saved owned by this user.
-The only way around this is to keep running `chown` and `chmod` to fix the permissions. 
+The only way around this is to keep running `chown` and `chmod` to fix the permissions.
 
 This plugin provides a wrapper around the CakePHP console to check the files in the temporary directory for incorrect owners and permissions, and correct them. It also adds an executable to `/usr/local/bin/cake`, which can be run as just `cake` (providing the path environment variable includes `/usr/local/bin`). This can be run from anywhere in the application path (with a few caveats).
 
