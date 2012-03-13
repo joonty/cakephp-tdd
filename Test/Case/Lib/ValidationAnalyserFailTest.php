@@ -28,30 +28,29 @@ class ValidationAnalyserFailTestCase extends CakeTestCase {
 	 * @var ValidationAnalyser
 	 */
 	protected $sut;
-	
+
 	public function setUp() {
 		$model = new Badexamplemodel();
 		$this->sut = new ValidationAnalyser($model);
 	}
-	
+
 	public function testThereAreWarnings() {
 		$warning = $this->sut->getWarningsAsString();
-		debug($warning);
 		$this->assertTrue(strlen($warning)>0,"There should be a warning message for parsing this rule set");
 	}
-	
+
 	public function testIdFieldIsNumeric() {
 		$ret = $this->sut->validField('id');
 		$this->assertTrue(is_numeric($ret),"Return value for 'id' should be numeric");
 	}
-	
+
 	public function testAfieldFieldIsNumeric() {
 		$ret = $this->sut->validField('afield');
 		$this->assertTrue(Validation::email($ret),"Return value for 'afield' should be an email");
 	}
-	
+
 	/**
-	 * @expectedException InvalidFieldNameException 
+	 * @expectedException InvalidFieldNameException
 	 */
 	public function testInvalidFieldThrowsException() {
 		$this->sut->validField('anonexistentfield');
