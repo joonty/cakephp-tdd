@@ -125,12 +125,14 @@ EOD;
 
 	/**
 	 * Check that the index action sends the correct set of variables to the view.
+	 *
+	 * @return void
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
 			'<?php echo $method['action']?>', array('return' => 'vars')
 		);
-		$this->assertArrayHasKey('<?php echo strtolower($className)?>', $vars);
+		$this->assertArrayHasKey('<?php echo strtolower($className)?>', $vars,"Vars should have <?php echo strtolower($primaryModel)?> as a key");
 		$this->assertCount(10,$vars['<?php echo strtolower($className)?>']);
 		$this->assertArrayHasKey('<?php echo $primaryModel?>', $vars['<?php echo strtolower($className)?>'][0]);
 	}
@@ -140,6 +142,8 @@ EOD;
 
 	/**
 	 * Check that the view action sends the correct set of variables to the view.
+	 *
+	 * @return void
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
@@ -149,8 +153,8 @@ EOD;
 				'method' => 'get'
 			)
 		);
-		$this->assertArrayHasKey('<?php echo strtolower($primaryModel)?>', $vars);
-		$this->assertArrayHasKey('<?php echo $primaryModel?>', $vars['<?php echo strtolower($primaryModel)?>']);
+		$this->assertArrayHasKey('<?php echo strtolower($primaryModel)?>', $vars,"Vars should have <?php echo strtolower($primaryModel)?> as a key");
+		$this->assertArrayHasKey('<?php echo $primaryModel?>', $vars['<?php echo strtolower($primaryModel)?>'],"Vars should contain <?php echo $primaryModel ?> data");
 	}
 <?php break;
 	case 'edit':?>
@@ -158,7 +162,7 @@ EOD;
 	/**
 	 * Check that the edit action sends the correct set of variables to the view.
 	 *
-	 * @todo Make some assertions to complete the testyy
+	 * @return void
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
@@ -168,7 +172,7 @@ EOD;
 				'method' => 'get'
 			)
 		);
-		$this->markTestIncomplete("Assertions required to complete test");
+		$this->assertArrayHasKey('<?php echo $primaryModel?>',$this->controller->request->data,"Request should contain <?php echo $primaryModel?> data");
 	}
 <?php break;
 	case 'add':?>
@@ -176,7 +180,7 @@ EOD;
 	/**
 	 * Check that the add action sends the correct set of variables to the view.
 	 *
-	 * @todo Make some assertions to complete the testyy
+	 * @return void
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
@@ -186,7 +190,7 @@ EOD;
 				'method' => 'get'
 			)
 		);
-		$this->markTestIncomplete("Assertions required to complete test");
+		$this->assertEmpty($this->controller->request->data,"Request data should be empty for an add action");
 	}
 <?php break;
 	case 'delete':
@@ -196,7 +200,7 @@ EOD;
 	/**
 	 * Check that the action sends the correct set of variables to the view.
 	 *
-	 * @todo Make some assertions to complete the testyy
+	 * @return void
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$vars = $this->testAction(
