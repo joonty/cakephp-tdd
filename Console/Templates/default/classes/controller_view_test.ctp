@@ -22,7 +22,6 @@ echo "<?php\n";
 /**
  * Contains a test case for <?php echo $fullClassName?>.
  *
- * @subpackage Tests
  * @copyright Copyright (c) 22 Blue 2012
  */
 App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
@@ -30,6 +29,8 @@ App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 /**
  * <?php echo $fullClassName; ?> Test Case
  *
+ * @package <?php echo $package.PHP_EOL ?>
+ * @subpackage Tests
  */
 class <?php echo $fullClassName; ?>ViewTestCase extends TddControllerTestCase {
 <?php if (!empty($fixtures)): ?>
@@ -40,9 +41,15 @@ class <?php echo $fullClassName; ?>ViewTestCase extends TddControllerTestCase {
 	 */
 	public $fixtures = array('<?php echo join("', '", $fixtures); ?>');
 
+	/*
+	*
+	* Set up / Tear down
+	*
+	*/
+
 <?php endif; ?>
 	/**
-	 * setUp method
+	 * Create the mock controller to be used by all tests.
 	 */
 	public function setUp() {
 		parent::setUp();
@@ -98,7 +105,7 @@ EOD;
 	}
 
 	/**
-	 * tearDown method
+	 * Unset the mock controller and call the parent tearDown method.
 	 */
 	public function tearDown() {
 		unset($this-><?php echo $className;?>);
@@ -106,24 +113,33 @@ EOD;
 		parent::tearDown();
 	}
 
+	/*
+	*
+	* Test cases
+	*
+	*/
 <?php foreach ($methods as $method): ?>
 <?php switch ($method['type']):?>
 <?php case 'index':?>
 
 	/**
 	 * Test that the output HTML for the index action is valid, and can be loaded by DOMDocument.
+	 *
+	 * @return DOMDocument
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 
-		$ret = $this->testAction(
+		$html = $this->testAction(
 			'<?php echo $method['action']?>',
 			array('return' => 'view')
 		);
 
-		$html = new DOMDocument();
-		$html->loadHTML($ret);
+		$doc = new DOMDocument();
+		$doc->loadHTML($html);
 
-		$this->assertSelectCount('.<?php echo strtolower($className)?> table tr', 11, $html);
+		$this->assertSelectCount('.<?php echo strtolower($className)?> table tr', 11, $doc);
+
+		return $doc;
 	}
 <?php break;
 	case 'edit':
@@ -131,6 +147,8 @@ EOD;
 
 	/**
 	 * Test that the output HTML is valid, and can be loaded by DOMDocument.
+	 *
+	 * @return DOMDocument
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$html = $this->testAction(
@@ -142,6 +160,8 @@ EOD;
 		);
 		$doc = new DOMDocument();
 		$doc->loadHTML($html);
+
+		return $doc;
 	}
 
 <?php break;
@@ -149,6 +169,8 @@ EOD;
 
 	/**
 	 * Test that the output HTML for the add action is valid, and can be loaded by DOMDocument.
+	 *
+	 * @return DOMDocument
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$html = $this->testAction(
@@ -160,6 +182,8 @@ EOD;
 		);
 		$doc = new DOMDocument();
 		$doc->loadHTML($html);
+
+		return $doc;
 	}
 <?php break;
 	case 'delete':?>
@@ -167,6 +191,8 @@ EOD;
 	default:?>
 	/**
 	 * Test that the output HTML is valid, and can be loaded by DOMDocument.
+	 *
+	 * @return DOMDocument
 	 */
 	public function test<?php echo Inflector::classify($method['name']); ?>() {
 		$html = $this->testAction(
@@ -175,6 +201,8 @@ EOD;
 		);
 		$doc = new DOMDocument();
 		$doc->loadHTML($html);
+
+		return $doc;
 	}
 <?php endswitch;?>
 <?php endforeach;?>

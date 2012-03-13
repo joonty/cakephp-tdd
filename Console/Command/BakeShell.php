@@ -40,7 +40,7 @@ class BakeShell extends AppShell {
 	 *
 	 * @var array
 	 */
-	public $tasks = array('Project', 'DbConfig', 'Tdd.TddModel', 'Tdd.TddController', 'View', 'Plugin', 'Fixture', 'Test');
+	public $tasks = array('Project', 'DbConfig', 'Tdd.TddModel', 'Tdd.TddController', 'View', 'Plugin', 'Tdd.TddFixture', 'Tdd.TddTest');
 
 	/**
 	 * The connection being used.
@@ -48,6 +48,8 @@ class BakeShell extends AppShell {
 	 * @var string
 	 */
 	public $connection = 'default';
+
+	public $package;
 
 	/**
 	 * Assign $this->connection to the active task if a connection param is set.
@@ -59,9 +61,14 @@ class BakeShell extends AppShell {
 		Configure::write('debug', 2);
 		Configure::write('Cache.disable', 1);
 		$task = Inflector::classify($this->command);
-		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
-			if (isset($this->params['connection'])) {
-				$this->{$task}->connection = $this->params['connection'];
+		if (isset($this->{$task})) {
+			if (!in_array($task, array('Project', 'DbConfig'))) {
+				if (isset($this->params['connection'])) {
+					$this->{$task}->connection = $this->params['connection'];
+				}
+			}
+			if (isset($this->params['package'])) {
+				$this->{$task}->package = $this->params['package'];
 			}
 		}
 	}
@@ -103,22 +110,26 @@ class BakeShell extends AppShell {
 				$this->DbConfig->execute();
 				break;
 			case 'M':
+				$this->TddModel->package = $this->params['package'];
 				$this->TddModel->execute();
 				break;
 			case 'V':
 				$this->View->execute();
 				break;
 			case 'C':
+				$this->TddController->package = $this->params['package'];
 				$this->TddController->execute();
 				break;
 			case 'P':
 				$this->Project->execute();
 				break;
 			case 'F':
-				$this->Fixture->execute();
+				$this->TddFixture->package = $this->params['package'];
+				$this->TddFixture->execute();
 				break;
 			case 'T':
-				$this->Test->execute();
+				$this->TddTest->package = $this->params['package'];
+				$this->TddTest->execute();
 				break;
 			case 'Q':
 				exit(0);
@@ -228,10 +239,14 @@ class BakeShell extends AppShell {
 			'parser' => $this->TddController->getOptionParser()
 		))->addSubcommand('fixture', array(
 			'help' => __d('cake_console', 'Bake a fixture.'),
-			'parser' => $this->Fixture->getOptionParser()
+			'parser' => $this->TddFixture->getOptionParser()
 		))->addSubcommand('test', array(
 			'help' => __d('cake_console', 'Bake a unit test.'),
-			'parser' => $this->Test->getOptionParser()
+			'parser' => $this->TddTest->getOptionParser()
+		))->addOption('package', array(
+			'help' => __d('cake_console', 'Name of the current project to use for @package doc block tags.'),
+			'short' => 'p',
+			'default' => 'none'
 		))->addOption('connection', array(
 			'help' => __d('cake_console', 'Database connection to use in conjunction with `bake all`.'),
 			'short' => 'c',

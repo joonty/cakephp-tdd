@@ -25,6 +25,8 @@ App::uses('<?php echo $fullClassName; ?>', '<?php echo $realType; ?>');
 /**
  * <?php echo $fullClassName; ?> Test Case
  *
+ * @package <?php echo $package.PHP_EOL ?>
+ * @subpackage Tests
  */
 class <?php echo $fullClassName; ?>TestCase extends TddTestCase {
 <?php if (!empty($fixtures)): ?>

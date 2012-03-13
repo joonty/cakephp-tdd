@@ -4,6 +4,8 @@ App::uses('TestTask', 'Console/Command/Task');
 
 class TddControllerTestTask extends TestTask {
 
+	public $package = "none";
+
 	public function bake($type, $className, $actions, $helpers, $components) {
 		$plugin = null;
 		if ($this->plugin) {
@@ -41,6 +43,7 @@ class TddControllerTestTask extends TestTask {
 
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
+		$this->Template->set('package',$this->package);
 		$this->Template->set(compact(
 		'className', 'methods', 'components', 'type', 'fullClassName', 'mock', 'construction', 'realType','primaryModel','models'
 		));

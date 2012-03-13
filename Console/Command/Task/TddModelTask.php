@@ -12,24 +12,28 @@ class TddModelTask extends ModelTask {
  *
  * @var array
  */
-	public $tasks = array('DbConfig', 'Fixture', 'Tdd.TddTest','Tdd.TddTestTask', 'Template');
+	public $tasks = array('DbConfig', 'Tdd.TddFixture', 'Tdd.TddTest','Tdd.TddTestTask', 'Template');
+	public $package = "none";
 
 	public function bakeTest($className) {
 		$this->TddTest->interactive = $this->interactive;
 		$this->TddTest->plugin = $this->plugin;
 		$this->TddTest->connection = $this->connection;
+		$this->TddTest->package = $this->package;
 		return $this->TddTest->bake('Model', $className);
 	}
 
 	public function bakeFixture($className, $useTable = null,$data = array()) {
-		$this->Fixture->params['count'] = 10;
-		$this->Fixture->interactive = $this->interactive;
-		$this->Fixture->connection = $this->connection;
-		$this->Fixture->plugin = $this->plugin;
-		$this->Fixture->bake($className, $useTable,array('schema'=>$className,));
+		$this->TddFixture->params['count'] = 10;
+		$this->TddFixture->interactive = $this->interactive;
+		$this->TddFixture->connection = $this->connection;
+		$this->TddFixture->plugin = $this->plugin;
+		$this->TddFixture->package = $this->package;
+		$this->TddFixture->bake($className, $useTable,array('schema'=>$className,));
 	}
 
 	public function bake($name,$data = array()) {
+		$this->Template->set('package',$this->package);
 		parent::bake($name,$data);
 		$this->bakeTest($name);
 		$this->bakeFixture($name,null,$data);

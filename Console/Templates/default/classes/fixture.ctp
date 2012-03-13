@@ -25,6 +25,8 @@
 /**
  * <?php echo $model; ?>Fixture
  *
+ * @package <?php echo $package.PHP_EOL ?>
+ * @subpackage Tests
  */
 class <?php echo $model; ?>Fixture extends CakeTestFixture {
 <?php if ($table): ?>

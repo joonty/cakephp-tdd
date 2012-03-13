@@ -36,6 +36,8 @@ if (!$isScaffold) {
 	}
 }
 ?>
+ *
+ * @package <?php echo $package.PHP_EOL; ?>
  */
 class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>AppController {
 
