@@ -17,6 +17,9 @@ App::uses('MockLoader', 'Tdd.Lib');
  */
 class TddTestCase extends CakeTestCase {
 
+	/**
+	 * @var MockLoader
+	 */
 	protected $loader;
 
 	public function setUp() {

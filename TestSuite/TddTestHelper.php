@@ -29,7 +29,15 @@ class TddTestHelper {
 		}
 
 		if (!class_exists($class)) {
-			throw new TestFixtureException("Invalid or uninitialized fixture '$name'");
+			$path = TESTS."Fixture".DS.$class.'.php';
+
+			if (!file_exists($path)) {
+				throw new TestFixtureException("Missing or invalid fixture '$name'");
+			}
+			include $path;
+			if (!class_exists($class)) {
+				throw new TestFixtureException("Missing fixture class '$name'");
+			}
 		}
 
 		self::$fixtures[$class] = new $class;
