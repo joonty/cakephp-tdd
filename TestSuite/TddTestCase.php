@@ -22,6 +22,8 @@ class TddTestCase extends CakeTestCase {
 	 */
 	protected $loader;
 
+	protected $validators = array();
+
 	public function setUp() {
 		parent::setUp();
 
@@ -30,6 +32,16 @@ class TddTestCase extends CakeTestCase {
 		// Just use arrays to hold cached data
 		Cache::drop('default');
 		Cache::config('default', array('engine' => 'Tdd.ArrayCache'));
+	}
+
+	/**
+	 * Get a validator for a model name.
+	 *
+	 * @param string $modelName e.g. 'User'
+	 * @return ValidationAnalyser
+	 */
+	public function validator($modelName) {
+		return TddTestHelper::validator($modelName);
 	}
 
 	/**

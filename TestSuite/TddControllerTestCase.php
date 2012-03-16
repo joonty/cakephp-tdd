@@ -28,6 +28,16 @@ class TddControllerTestCase extends ControllerTestCase {
 	}
 
 	/**
+	 * Get a validator for a model name.
+	 *
+	 * @param string $modelName e.g. 'User'
+	 * @return ValidationAnalyser
+	 */
+	public function validator($modelName) {
+		return TddTestHelper::validator($modelName);
+	}
+
+	/**
 	 * Force a cache configuration to use the ArrayCacheEngine for temporary caching.
 	 *
 	 * This should be done where a custom cache is used, so that tests are isolated

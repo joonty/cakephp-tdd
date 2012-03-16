@@ -8,7 +8,11 @@
  * @copyright Copyright (c) 22 Blue 2012
  */
 
+App::uses('ClassRegistry','Utility');
+App::uses('ValidationAnalyser','Tdd.Lib');
+
 class TestFixtureException extends Exception {}
+class TestValidatorException extends Exception {}
 
 /**
  * TddTestHelper description
@@ -17,6 +21,7 @@ class TestFixtureException extends Exception {}
 class TddTestHelper {
 
 	protected static $fixtures;
+	protected static $validators = array();
 
 	protected static function getFixture($name) {
 		if (substr($name,0,4) == 'app.') {
@@ -44,6 +49,28 @@ class TddTestHelper {
 		return self::$fixtures[$class];
 	}
 
+	/**
+	 * Get a validator for a model name.
+	 *
+	 * @throws TestValidatorException
+	 * @param string $modelName e.g. 'User'
+	 * @return ValidationAnalyser
+	 */
+	public static function validator($modelName) {
+		if (array_key_exists($modelName,self::$validators)) {
+			return self::$validators[$modelName];
+		}
+		$model = ClassRegistry::init($modelName);
+		if (!$model) {
+			throw new TestValidatorException("Could not load model '$modelName' for creating validation data'");
+		}
+		if ($model instanceof Model) {
+			self::$validators[$modelName] = new ValidationAnalyser($model);
+			return self::$validators[$modelName];
+		} else {
+			throw new TestValidatorException("CLass name passed to validator must be a Model");
+		}
+	}
 	public static function getAllFixtureRecords($name) {
 		return self::getFixture($name)->records;
 	}
