@@ -33,7 +33,7 @@ class TddControllerTestCase extends ControllerTestCase {
 	 * @param string $modelName e.g. 'User'
 	 * @return ValidationAnalyser
 	 */
-	public function validator($modelName) {
+	public function validation($modelName) {
 		return TddTestHelper::validator($modelName);
 	}
 
