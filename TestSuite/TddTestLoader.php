@@ -1,17 +1,17 @@
 <?php
-
 /**
  * Contains the TddTestLoader class.
  *
- * @package Local TV
+ * @package TDD
  * @author Jon Cairns <jon.cairns@22blue.co.uk>
  * @copyright Copyright (c) 22 Blue 2012
  */
 App::uses('CakeTestLoader', 'TestSuite');
 
 /**
- * TddTestLoader description
+ * TddTestLoader allows for the use of glob patterns to include test files.
  *
+ * @package TDD
  */
 class TddTestLoader extends CakeTestLoader {
 

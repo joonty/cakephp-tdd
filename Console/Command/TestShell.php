@@ -142,12 +142,16 @@ class TestShell extends TestsuiteShell {
 		Cache::config('_cake_model_', array('engine' => 'Tdd.ArrayCache'));
 
 		//Cake doesn't want to include my test case, so we'll do it old-school
-		include realpath(__DIR__.'/../../TestSuite/TddTestCase.php');
-		include realpath(__DIR__.'/../../TestSuite/TddTestHelper.php');
-		include realpath(__DIR__.'/../../TestSuite/TddControllerTestCase.php');
-		include realpath(__DIR__.'/../../TestSuite/TddTestSuiteCommand.php');
-		include realpath(__DIR__.'/../../TestSuite/TddTestLoader.php');
-		include realpath(__DIR__.'/../../TestSuite/TddTestRunner.php');
+		$testsuite = realpath(__DIR__.'/../../TestSuite');
+		echo $testsuite;
+		require $testsuite.'/TddTestCase.php';
+		require $testsuite.'/TddTestHelper.php';
+		require $testsuite.'/TddControllerTestCase.php';
+		require $testsuite.'/TddTestSuiteCommand.php';
+		require $testsuite.'/TddTestLoader.php';
+		require $testsuite.'/TddTestRunner.php';
+		require $testsuite.'/TddTestSuite.php';
+		require $testsuite.'/TddFixtureManager.php';
 	}
 
 	protected function _parseArgs() {
