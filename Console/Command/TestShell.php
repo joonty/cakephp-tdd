@@ -143,7 +143,6 @@ class TestShell extends TestsuiteShell {
 
 		//Cake doesn't want to include my test case, so we'll do it old-school
 		$testsuite = realpath(__DIR__.'/../../TestSuite');
-		echo $testsuite;
 		require $testsuite.'/TddTestCase.php';
 		require $testsuite.'/TddTestHelper.php';
 		require $testsuite.'/TddControllerTestCase.php';
