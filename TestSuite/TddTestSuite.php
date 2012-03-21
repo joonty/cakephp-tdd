@@ -12,7 +12,6 @@
  */
 class TddTestSuite extends CakeTestSuite {
 
-/*
     public function run(PHPUnit_Framework_TestResult $result = NULL, $filter = FALSE, array $groups = array(), array $excludeGroups = array(), $processIsolation = FALSE) {
 	    $fixturePath = TESTS . 'Fixture';
 	    $allFixtures = scandir($fixturePath);
@@ -26,7 +25,7 @@ class TddTestSuite extends CakeTestSuite {
 	    }
 	    parent::run($result,$filter,$groups,$excludeGroups,$processIsolation);
     }
-*/
+
 	/**
 	 * Recursively adds all the files in a directory to the test suite.
 	 *
