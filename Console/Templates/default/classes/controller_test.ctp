@@ -233,8 +233,8 @@ EOD;
 	*/
 
 <?php foreach ($methods as $method): ?>
-<?php switch ($method['type']):?>
-<?php case "index":?>
+<?php switch ($method['type']):
+	case "index":?>
 <?php // We don't need an index test in this controller test case - try vars or view?>
 <?php break;
 	case "view":?>
