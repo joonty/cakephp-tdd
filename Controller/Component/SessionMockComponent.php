@@ -55,8 +55,8 @@ class SessionMockComponent extends SessionComponent {
 	}
 
 	public function delete($name) {
-		if (array_key_exists($name,$this->data)) {
-			unset($this->data[$name]);
+		if ($this->check($name)) {
+			Set::remove($this->data,$name);
 		}
 		return true;
 	}
