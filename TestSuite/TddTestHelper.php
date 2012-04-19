@@ -13,6 +13,7 @@ App::uses('ValidationAnalyser','Tdd.Lib');
 
 class TestFixtureException extends Exception {}
 class TestValidatorException extends Exception {}
+class TestDataException extends Exception {}
 
 /**
  * TddTestHelper description
@@ -112,6 +113,33 @@ class TddTestHelper {
 			}
 		}
 		return $ret;
+	}
+
+	public static function getRawData($file) {
+		$path = self::getDataFile($file);
+		return file_get_contents($path);
+	}
+	
+	public static function getEvalData($file) {
+		$path = self::getDataFile($file);
+		return include $path;
+	}
+
+	protected static function getDataFile($file) {
+		$file = ltrim(trim($file),DS);
+		$root = TESTS."Data";
+		if (!is_dir($root)) {
+			throw new TestDataException("'Data' directory missing in Test directory - cannot load data");
+		}
+		if (strlen($file) == 0) {
+			throw new TestDataException("Empty data file name");
+		}
+		
+		$path = $root.DS.$file;
+		if (!is_file($path)) {
+			throw new TestDataException("Missing data file '$file', expected it at '$path'");
+		}
+		return $path;
 	}
 }
 

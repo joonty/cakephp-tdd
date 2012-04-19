@@ -172,6 +172,35 @@ class TddControllerTestCase extends ControllerTestCase {
 		$this->controller = $_controller;
 		return $this->controller;
 	}
+
+	/**
+	 * Retrieve raw data from a data file.
+	 *
+	 * The data file should be located at Test/Data/<file>. This method returns the exact contents of the file
+	 * as a string.
+	 * 
+	 * @param string $file 
+	 * @access public
+	 * @return string
+	 */
+	public function getRawData($file) {
+		return TddTestHelper::getRawData($file);
+	}
+
+	/**
+	 * Retrieve PHP data from a data file.
+	 *
+	 * The data file should be located at Test/Data/<file>. This method includes the file, expecting it to be PHP code.
+	 * The returned data is whatever the file returns.
+	 *
+	 * @param string $file 
+	 * @access public
+	 * @return string
+	 */
+	public function getEvalData($file) {
+		return TddTestHelper::getEvalData($file);
+	}
+
 }
 
 ?>
