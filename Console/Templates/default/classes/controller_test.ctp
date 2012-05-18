@@ -290,6 +290,9 @@ EOD;
 			array('data'=>$data)
 		);
 
+		$flash = $this->controller->Session->read('Message.flash.message');
+		$this->assertNotContains("could not be saved", $flash);
+
 		$dbData = $this->controller-><?php echo $primaryModel?>->findById($data['<?php echo $primaryModel?>']['id']);
 
 		$this->assertInternalType('array',$dbData);
@@ -351,7 +354,7 @@ EOD;
 	 */
 	public function test<?php echo $method['name'] ?>ModifiesData($data) {
 		$id = 1;
-		$data['<?php echo $primaryModel?>']['id'] = $id;
+		unset($data['<?php echo $primaryModel?>']['id']);
 
 		$this->testAction(
 			'<?php echo $method['action']?>/'.$id,
