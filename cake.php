@@ -32,6 +32,9 @@ if ($argc > 1) {
 		$argv[1] = 'Tdd.test';
 	}
 }
+if (!is_dir('tmp')) {
+	create_tmp_dirs();
+}
 $tmp_files = array();
 exec('ls -ARl tmp', $tmp_files);
 $require_chown = false;
@@ -101,5 +104,16 @@ function passwordPrompt() {
 	} else {
 		return null;
 	}
+}
+
+function create_tmp_dirs() {
+	echo "Creating temporary directories\n";
+	mkdir('tmp') or die("Failed to create temporary directory\n");
+	mkdir('tmp/cache');
+	mkdir('tmp/cache/view');
+	mkdir('tmp/cache/models');
+	mkdir('tmp/cache/persistent');
+	mkdir('tmp/logs');
+	mkdir('tmp/sessions');
 }
 ?>
