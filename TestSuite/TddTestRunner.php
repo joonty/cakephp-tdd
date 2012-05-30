@@ -20,11 +20,8 @@ class TddTestRunner extends CakeTestRunner {
 		$loader = $this->getLoader();
 		$files = $loader->glob($suiteClassName,$suiteClassFile);
 		if ($files && count($files)) {
-			echo "Including test files:".PHP_EOL;
 			foreach ($files as $f) {
-				echo " - $f".PHP_EOL;
 			}
-			echo PHP_EOL;
 			$suite = new PHPUnit_Framework_TestSuite($suiteClassName);
 			$suite->addTestFiles($files);
 			return $suite;
