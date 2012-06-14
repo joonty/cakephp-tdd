@@ -228,6 +228,25 @@ class TestShell extends TestsuiteShell {
 			}
 		}
 	}
+
+	public function out($message = null, $newlines = 1, $level = Shell::NORMAL) {
+		$currentLevel = Shell::NORMAL;
+		if (!empty($this->params['verbose'])) {
+			$currentLevel = Shell::VERBOSE;
+		}
+		if (!empty($this->params['quiet'])) {
+			$currentLevel = Shell::QUIET;
+		}
+		if ($level <= $currentLevel) {
+			if (isset($this->params['stderr'])) {
+				return $this->stderr->write($message, $newlines);
+			} else {
+				return $this->stdout->write($message, $newlines);
+			}
+		}
+		return true;
+	}
+
 }
 
 ?>

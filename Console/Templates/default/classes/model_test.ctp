@@ -53,7 +53,8 @@ class <?php echo $fullClassName; ?>TestCase extends TddTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this-><?php echo $className . ' = ' . $construction; ?>
+		$this-><?php echo $className . ' = ClassRegistry::init("'.$className.'");
+'; ?>
 	}
 
 	/**
