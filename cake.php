@@ -48,22 +48,31 @@ foreach ($tmp_files as $f) {
 	$f_user = $f_parts[2];
 	if ($f_user != $user) {
 		$require_chown = true;
-		echo "Incorrect user detected for some of the temporary files\n";
+		fwrite(STDERR,"Incorrect user detected for some of the temporary files\n");
 		break;
 	}
 }
 
+$sudo_attempts = 0;
 if ($require_chown) {
-	echo "Your root password is required to run chown on the temporary directory\n";
-	$pass = null;
-	while (is_null($pass)) {
-		$pass = passwordPrompt();
+	while ($sudo_attempts < 3) {
+		fwrite(STDERR,"Your root password is required to run chown on the temporary directory\n");
+		$pass = null;
+		while (is_null($pass)) {
+			$pass = passwordPrompt();
+		}
+		$retval = 0;
+		$op = array();
+		exec('echo "' . $pass . '" | sudo -u root -S /bin/chown -R ' . $uid . ':' . $uid . ' tmp 2>/dev/null', $op, $retval);
+		if ($retval != 0) {
+			fwrite(STDERR,"Invalid root password\n");
+			$sudo_attempts++;
+		} else {
+			break;
+		}
 	}
-	$retval = 0;
-	$op = array();
-	exec('echo "' . $pass . '" | sudo -u root -S /bin/chown -R ' . $uid . ':' . $uid . ' tmp 2>/dev/null', $op, $retval);
-	if ($retval != 0) {
-		die("Invalid root password\n");
+	if ($sudo_attempts == 3) {
+		die("Too many failed password attempts: ending\n");
 	}
 }
 chmodr('tmp', 0777);
@@ -96,9 +105,9 @@ function chmodr($path, $filemode) {
 
 function passwordPrompt() {
 	passthru('set /p pass=Password: ');
-	echo 'Password: ';
+	fwrite(STDERR,'Password: ');
 	$pwd = preg_replace('/\r?\n$/', '', `stty -echo; head -n1 ; stty echo`);
-	echo "\n";
+	fwrite(STDERR,"\n");
 	if (strlen($pwd)) {
 		return $pwd;
 	} else {
@@ -107,7 +116,7 @@ function passwordPrompt() {
 }
 
 function create_tmp_dirs() {
-	echo "Creating temporary directories\n";
+	fwrite(STDERR,"Creating temporary directories\n");
 	mkdir('tmp') or die("Failed to create temporary directory\n");
 	mkdir('tmp/cache');
 	mkdir('tmp/cache/view');

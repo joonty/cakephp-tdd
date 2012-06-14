@@ -69,7 +69,7 @@ if ($displayField): ?>
 <?php endif;
 
 if (!empty($validate)):
-	echo "/**\n * Validation rules\n *\n * @var array\n */\n";
+	echo "\t/**\n * Validation rules\n *\n * @var array\n */\n";
 	echo "\tpublic \$validate = array(\n";
 	foreach ($validate as $field => $validations):
 		echo "\t\t'$field' => array(\n";
@@ -100,7 +100,7 @@ endforeach;
 foreach (array('hasOne', 'belongsTo') as $assocType):
 	if (!empty($associations[$assocType])):
 		$typeCount = count($associations[$assocType]);
-		echo "\n/**\n * $assocType associations\n *\n * @var array\n */";
+		echo "\n\t/**\n * $assocType associations\n *\n * @var array\n */";
 		echo "\n\tpublic \$$assocType = array(";
 		foreach ($associations[$assocType] as $i => $relation):
 			$out = "\n\t\t'{$relation['alias']}' => array(\n";
@@ -121,7 +121,7 @@ endforeach;
 
 if (!empty($associations['hasMany'])):
 	$belongsToCount = count($associations['hasMany']);
-	echo "\n/**\n * hasMany associations\n *\n * @var array\n */";
+	echo "\n\t/**\n * hasMany associations\n *\n * @var array\n */";
 	echo "\n\tpublic \$hasMany = array(";
 	foreach ($associations['hasMany'] as $i => $relation):
 		$out = "\n\t\t'{$relation['alias']}' => array(\n";
@@ -147,7 +147,7 @@ endif;
 
 if (!empty($associations['hasAndBelongsToMany'])):
 	$habtmCount = count($associations['hasAndBelongsToMany']);
-	echo "\n/**\n * hasAndBelongsToMany associations\n *\n * @var array\n */";
+	echo "\n\t/**\n * hasAndBelongsToMany associations\n *\n * @var array\n */";
 	echo "\n\tpublic \$hasAndBelongsToMany = array(";
 	foreach ($associations['hasAndBelongsToMany'] as $i => $relation):
 		$out = "\n\t\t'{$relation['alias']}' => array(\n";
