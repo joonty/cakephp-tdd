@@ -96,6 +96,17 @@ class TddTestCase extends CakeTestCase {
 	}
 
 	/**
+	 * Get the full path to a data file. 
+	 * 
+	 * @param mixed $file 
+	 * @access public
+	 * @return string
+	 */
+	public function getDataFilePath($file) {
+		return TddTestHelper::getDataFilePath($file);
+	}
+
+	/**
 	 * Retrieve raw data from a data file.
 	 *
 	 * The data file should be located at Test/Data/<file>. This method returns the exact contents of the file

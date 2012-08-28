@@ -141,6 +141,19 @@ class TddTestHelper {
 		}
 		return $path;
 	}
+
+	/**
+	 * Get the full path to a data file. 
+	 * 
+	 * @param mixed $file 
+	 * @access public
+	 * @return string
+	 */
+	public static function getDataFilePath($file) {
+		return self::getDataFile($file);
+	}
+
+
 }
 
 ?>
