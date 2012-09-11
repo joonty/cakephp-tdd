@@ -116,6 +116,7 @@ class TddControllerTestCase extends ControllerTestCase {
 		$_controller->__construct($request, $response);
 
 		$config = ClassRegistry::config('Model');
+		$modelNames = array();
 		foreach ($mocks['models'] as $model => $methods) {
 			if (is_string($methods)) {
 				$model = $methods;
@@ -130,6 +131,7 @@ class TddControllerTestCase extends ControllerTestCase {
 			$_model = $this->getMock($name, $methods, array($config));
 			ClassRegistry::removeObject($name);
 			ClassRegistry::addObject($name, $_model);
+			$modelNames[] = $name;
 		}
 
 		foreach ($mocks['components'] as $component => $contents) {
@@ -168,6 +170,9 @@ class TddControllerTestCase extends ControllerTestCase {
 
 		$_controller->constructClasses();
 		$this->__dirtyController = false;
+		foreach ($modelNames as $n) {
+			$_controller->{$n};
+		}
 
 		$this->controller = $_controller;
 		return $this->controller;
