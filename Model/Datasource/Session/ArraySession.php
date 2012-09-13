@@ -3,7 +3,7 @@
 /**
  * Description of MockSession
  *
- * @author Jon Cairns <jon@22blue.co.uk>
+ * @author Jon Cairns <jon@ggapps.co.uk>
  */
 class ArraySession implements CakeSessionHandlerInterface {
 	protected static $_data = array();

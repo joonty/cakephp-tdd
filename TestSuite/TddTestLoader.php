@@ -3,8 +3,8 @@
  * Contains the TddTestLoader class.
  *
  * @package TDD
- * @author Jon Cairns <jon.cairns@22blue.co.uk>
- * @copyright Copyright (c) 22 Blue 2012
+ * @author Jon Cairns <jon.cairns@ggapps.co.uk>
+ * @copyright Copyright (c) Green Gorilla Apps 2012
  */
 App::uses('CakeTestLoader', 'TestSuite');
 

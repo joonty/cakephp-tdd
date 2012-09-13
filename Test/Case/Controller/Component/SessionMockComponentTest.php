@@ -5,8 +5,8 @@ App::uses('SessionMockComponent','Tdd.Controller/Component');
  * Contains a test case for the SessionMockComponent class.
  *
  * @package Bromford
- * @author Jon Cairns <jon.cairns@22blue.co.uk>
- * @copyright Copyright (c) 22 Blue 2012
+ * @author Jon Cairns <jon.cairns@ggapps.co.uk>
+ * @copyright Copyright (c) Green Gorilla Apps 2012
  */
 class SessionMockComponentTestCase extends CakeTestCase {
 	protected $component;
