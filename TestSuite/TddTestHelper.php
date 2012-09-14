@@ -28,7 +28,17 @@ class TddTestHelper {
 		if (substr($name,0,4) == 'app.') {
 			$name = substr($name,4);
 		}
-		$class = ucfirst(strtolower($name)).'Fixture';
+		if (stristr($name,'_')) {
+			$name_parts = explode('_',$name);
+
+		} else {
+			$name_parts = array($name);
+		}
+		$class = '';
+		foreach ($name_parts as $name_part) {
+			$class .= ucfirst(strtolower($name_part));
+		}
+		$class .= 'Fixture';
 
 		if (isset(self::$fixtures[$class])) {
 			return self::$fixtures[$class];
