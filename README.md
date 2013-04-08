@@ -1,5 +1,7 @@
 # TDD plugin for CakePHP 2
 
+**Notice:** this repository will no longer receive any updates. It works *pretty* well with CakePHP ~> 2.0.5, but 2.1.0+ introduced some major API changes that causes it to break. If anyone is interested in carrying this project on then please let me know.
+
 ## Helpful tools for test driven development with the CakePHP framework
 
 100% code coverage is the aim of test driven development, but it can be hard and
